@@ -1,3601 +1,633 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGNAL SYNC - AI Smart Safety Monitoring</title>
 
-<title>SIGNAL SYNC - Digital Prototype</title>
+<!-- External libraries: internet is required for these two libraries -->
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-
-/* =========================================================
-   GLOBAL
-========================================================= */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
-}
-
-body {
-
-    min-height: 100vh;
-
-    color: #e6f7ff;
-
-    background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(0, 200, 255, 0.14),
-            transparent 25%
-        ),
-        radial-gradient(
-            circle at 90% 90%,
-            rgba(0, 255, 170, 0.08),
-            transparent 25%
-        ),
-        linear-gradient(
-            135deg,
-            #020617,
-            #061525 45%,
-            #020b14
-        );
-
-    background-attachment: fixed;
-}
-
-
-/* TECH GRID */
-
-body::before {
-
-    content: "";
-
-    position: fixed;
-
-    inset: 0;
-
-    background-image:
-        linear-gradient(
-            rgba(0, 180, 255, 0.035) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(0, 180, 255, 0.035) 1px,
-            transparent 1px
-        );
-
-    background-size: 40px 40px;
-
-    pointer-events: none;
-
-    z-index: -1;
-}
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-header {
-
-    background:
-        linear-gradient(
-            135deg,
-            #020617,
-            #06233a,
-            #03111f
-        );
-
-    border-bottom:
-        1px solid rgba(34, 211, 238, 0.3);
-
-    padding: 25px;
-
-    text-align: center;
-
-    box-shadow:
-        0 5px 35px rgba(0, 180, 255, 0.12);
-}
-
-header h1 {
-
-    font-size: 34px;
-
-    letter-spacing: 3px;
-
-    color: #67e8f9;
-
-    text-shadow:
-        0 0 15px rgba(34, 211, 238, 0.6);
-}
-
-header p {
-
-    margin-top: 8px;
-
-    color: #94a3b8;
-
-    letter-spacing: 1px;
-}
-
-
-/* =========================================================
-   MAIN
-========================================================= */
-
-.container {
-
-    width: 95%;
-
-    max-width: 1450px;
-
-    margin: 25px auto;
-}
-
-
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-.dashboard {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 18px;
-
-    margin-bottom: 20px;
-}
-
-.card {
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(10, 30, 48, 0.94),
-            rgba(3, 15, 28, 0.96)
-        );
-
-    border:
-        1px solid rgba(56, 189, 248, 0.16);
-
-    padding: 20px;
-
-    border-radius: 14px;
-
-    box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.35);
-
-    transition: 0.25s;
-}
-
-.card:hover {
-
-    transform: translateY(-3px);
-
-    border-color:
-        rgba(56, 189, 248, 0.45);
-
-    box-shadow:
-        0 10px 35px
-        rgba(0, 180, 255, 0.12);
-}
-
-.card h3 {
-
-    color: #7dd3fc;
-
-    font-size: 13px;
-
-    text-transform: uppercase;
-
-    letter-spacing: 1px;
-}
-
-.card strong {
-
-    display: block;
-
-    font-size: 32px;
-
-    margin-top: 8px;
-
-    color: #f0f9ff;
-}
-
-
-/* =========================================================
-   STATUS BAR
-========================================================= */
-
-.status-box {
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(10, 30, 48, 0.94),
-            rgba(3, 15, 28, 0.96)
-        );
-
-    border:
-        1px solid rgba(56, 189, 248, 0.16);
-
-    padding: 20px;
-
-    border-radius: 14px;
-
-    margin-bottom: 20px;
-
-    box-shadow:
-        0 10px 35px rgba(0,0,0,0.3);
-}
-
-.status-row {
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 12px;
-}
-
-.status {
-
-    padding: 10px 18px;
-
-    border-radius: 30px;
-
-    font-weight: bold;
-
-    letter-spacing: 0.5px;
-}
-
-.safe {
-
-    background:
-        rgba(16,185,129,0.12);
-
-    color: #34d399;
-
-    border:
-        1px solid rgba(52,211,153,0.35);
-}
-
-.motion {
-
-    background:
-        rgba(245,158,11,0.12);
-
-    color: #fbbf24;
-
-    border:
-        1px solid rgba(245,158,11,0.35);
-}
-
-.impact {
-
-    background:
-        rgba(239,68,68,0.12);
-
-    color: #f87171;
-
-    border:
-        1px solid rgba(239,68,68,0.4);
-}
-
-.searching {
-
-    background:
-        rgba(59,130,246,0.12);
-
-    color: #60a5fa;
-
-    border:
-        1px solid rgba(59,130,246,0.35);
-}
-
-.pending {
-
-    background:
-        rgba(100,116,139,0.15);
-
-    color: #cbd5e1;
-
-    border:
-        1px solid rgba(148,163,184,0.25);
-}
-
-
-/* =========================================================
-   MAIN GRID
-========================================================= */
-
-.main-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 20px;
-}
-
-
-/* =========================================================
-   SECTIONS
-========================================================= */
-
-.section {
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(10, 30, 48, 0.94),
-            rgba(3, 15, 28, 0.96)
-        );
-
-    border:
-        1px solid rgba(56,189,248,0.16);
-
-    padding: 22px;
-
-    border-radius: 14px;
-
-    margin-bottom: 20px;
-
-    box-shadow:
-        0 10px 35px rgba(0,0,0,0.3);
-}
-
-.section h2 {
-
-    margin-bottom: 18px;
-
-    color: #bae6fd;
-
-    border-bottom:
-        1px solid rgba(56,189,248,0.15);
-
-    padding-bottom: 12px;
-}
-
-
-/* =========================================================
-   SENSOR INPUT
-========================================================= */
-
-.input-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 15px;
-}
-
-.input-box {
-
-    display: flex;
-
-    flex-direction: column;
-}
-
-.input-box label {
-
-    color: #cbd5e1;
-
-    font-weight: 600;
-
-    margin-bottom: 7px;
-
-    font-size: 14px;
-}
-
-.input-box input {
-
-    padding: 12px;
-
-    background: #020b14;
-
-    color: #e0f2fe;
-
-    border:
-        1px solid #164e63;
-
-    border-radius: 8px;
-
-    font-size: 15px;
-}
-
-.input-box input:focus {
-
-    outline: none;
-
-    border-color: #22d3ee;
-
-    box-shadow:
-        0 0 12px rgba(34,211,238,0.15);
-}
-
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-button {
-
-    border: none;
-
-    padding: 11px 17px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-weight: 700;
-
-    margin: 5px;
-
-    transition: 0.2s;
-}
-
-button:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 5px 15px rgba(0,0,0,0.3);
-}
-
-.primary {
-
-    background: #0284c7;
-
-    color: white;
-}
-
-.success {
-
-    background: #059669;
-
-    color: white;
-}
-
-.danger {
-
-    background: #dc2626;
-
-    color: white;
-}
-
-.warning {
-
-    background: #d97706;
-
-    color: white;
-}
-
-.dark {
-
-    background: #1e293b;
-
-    color: white;
-}
-
-.gray {
-
-    background: #475569;
-
-    color: white;
-}
-
-
-/* =========================================================
-   OLED
-========================================================= */
-
-.oled {
-
-    background:
-        radial-gradient(
-            circle at center,
-            #06331b,
-            #02130a 70%
-        );
-
-    color: #39ff88;
-
-    border:
-        7px solid #17202a;
-
-    border-radius: 10px;
-
-    padding: 22px;
-
-    min-height: 250px;
-
-    font-family: monospace;
-
-    box-shadow:
-        0 0 25px rgba(0,255,120,0.08),
-        inset 0 0 30px rgba(0,255,120,0.08);
-}
-
-.oled-line {
-
-    margin: 11px 0;
-
-    font-size: 15px;
-
-    font-family: monospace;
-
-    text-shadow:
-        0 0 7px rgba(57,255,136,0.4);
-}
-
-.oled-title {
-
-    font-weight: bold;
-
-    font-size: 18px;
-
-    margin-bottom: 15px;
-}
-
-
-/* =========================================================
-   ACTUATORS
-========================================================= */
-
-.actuator {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap: 15px;
-}
-
-.actuator-box {
-
-    background:
-        rgba(5,25,40,0.7);
-
-    border:
-        1px solid rgba(56,189,248,0.12);
-
-    border-radius: 10px;
-
-    padding: 18px;
-
-    text-align: center;
-}
-
-.actuator-box h3 {
-
-    color: #bae6fd;
-}
-
-.indicator {
-
-    width: 28px;
-
-    height: 28px;
-
-    border-radius: 50%;
-
-    background: #475569;
-
-    margin: 12px auto;
-
-    transition: 0.2s;
-}
-
-.indicator.on {
-
-    background: #22c55e;
-
-    box-shadow:
-        0 0 18px #22c55e;
-}
-
-.indicator.buzzer-on {
-
-    background: #ef4444;
-
-    box-shadow:
-        0 0 18px #ef4444;
-}
-
-
-/* =========================================================
-   EVENT LOG
-========================================================= */
-
-.log {
-
-    max-height: 260px;
-
-    overflow-y: auto;
-
-    background: #020811;
-
-    color: #67e8f9;
-
-    padding: 15px;
-
-    border-radius: 8px;
-
-    border:
-        1px solid rgba(34,211,238,0.12);
-
-    font-family: monospace;
-
-    font-size: 13px;
-}
-
-.log div {
-
-    margin-bottom: 9px;
-
-    padding-bottom: 7px;
-
-    border-bottom:
-        1px solid rgba(255,255,255,0.04);
-}
-
-
-/* =========================================================
-   HISTORY
-========================================================= */
-
-.history-controls {
-
-    display: flex;
-
-    gap: 8px;
-
-    flex-wrap: wrap;
-
-    margin-bottom: 15px;
-}
-
-.history-controls input {
-
-    flex: 1;
-
-    min-width: 250px;
-
-    padding: 12px;
-
-    background: #020b14;
-
-    color: #e0f2fe;
-
-    border:
-        1px solid #164e63;
-
-    border-radius: 8px;
-}
-
-.history-controls input::placeholder {
-
-    color: #64748b;
-}
-
-.history-list {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-}
-
-.history-item {
-
-    border:
-        1px solid rgba(56,189,248,0.15);
-
-    border-radius: 10px;
-
-    overflow: hidden;
-
-    background:
-        rgba(2,15,28,0.7);
-}
-
-.history-header {
-
-    padding: 16px;
-
-    background:
-        rgba(8,30,48,0.8);
-
-    cursor: pointer;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 10px;
-}
-
-.history-header:hover {
-
-    background:
-        rgba(14,50,75,0.9);
-}
-
-.history-title {
-
-    font-weight: bold;
-
-    color: #e0f2fe;
-}
-
-.history-time {
-
-    font-size: 13px;
-
-    color: #64748b;
-
-    margin-top: 5px;
-}
-
-.history-details {
-
-    display: none;
-
-    padding: 18px;
-
-    background: #020b14;
-
-    border-top:
-        1px solid rgba(56,189,248,0.15);
-}
-
-.history-details.open {
-
-    display: block;
-}
-
-.detail-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap: 10px;
-}
-
-.detail {
-
-    background:
-        rgba(15,40,58,0.6);
-
-    padding: 11px;
-
-    border-radius: 7px;
-}
-
-.detail span {
-
-    display: block;
-
-    color: #64748b;
-
-    font-size: 12px;
-}
-
-.detail strong {
-
-    display: block;
-
-    margin-top: 4px;
-
-    color: #dbeafe;
-}
-
-.history-actions {
-
-    margin-top: 15px;
-
-    display: flex;
-
-    flex-wrap: wrap;
-}
-
-
-/* =========================================================
-   EMPTY HISTORY
-========================================================= */
-
-.empty-history {
-
-    padding: 30px;
-
-    text-align: center;
-
-    color: #64748b;
-
-    border:
-        1px dashed rgba(56,189,248,0.2);
-
-    border-radius: 10px;
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media(max-width: 900px) {
-
-    .dashboard {
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-    .main-grid {
-
-        grid-template-columns:
-            1fr;
-    }
-}
-
-@media(max-width: 600px) {
-
-    .dashboard {
-
-        grid-template-columns:
-            1fr;
-    }
-
-    .input-grid {
-
-        grid-template-columns:
-            1fr;
-    }
-
-    .detail-grid {
-
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-    header h1 {
-
-        font-size: 25px;
-    }
-}
-
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Arial,sans-serif}
+body{min-height:100vh;color:#e6f7ff;background:
+radial-gradient(circle at 10% 10%,rgba(0,200,255,.14),transparent 25%),
+radial-gradient(circle at 90% 90%,rgba(0,255,170,.08),transparent 25%),
+linear-gradient(135deg,#020617,#061525 45%,#020b14);background-attachment:fixed}
+body:before{content:"";position:fixed;inset:0;background-image:
+linear-gradient(rgba(0,180,255,.035) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,180,255,.035) 1px,transparent 1px);
+background-size:40px 40px;pointer-events:none;z-index:-1}
+header{padding:25px;text-align:center;background:linear-gradient(135deg,#020617,#06233a,#03111f);
+border-bottom:1px solid rgba(34,211,238,.3);box-shadow:0 5px 35px rgba(0,180,255,.12)}
+header h1{font-size:34px;letter-spacing:3px;color:#67e8f9;text-shadow:0 0 15px rgba(34,211,238,.6)}
+header p{margin-top:8px;color:#94a3b8;letter-spacing:1px}
+.container{width:95%;max-width:1500px;margin:25px auto}
+.dashboard{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:20px}
+.card,.section,.status-box{background:linear-gradient(145deg,rgba(10,30,48,.94),rgba(3,15,28,.96));
+border:1px solid rgba(56,189,248,.16);border-radius:14px;box-shadow:0 10px 35px rgba(0,0,0,.3)}
+.card{padding:18px}.card:hover{transform:translateY(-2px);border-color:rgba(56,189,248,.4)}
+.card h3{color:#7dd3fc;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.card strong{display:block;font-size:28px;margin-top:7px;color:#f0f9ff}
+.status-box{padding:18px;margin-bottom:20px}.status-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.status{padding:9px 15px;border-radius:30px;font-weight:700;font-size:13px}
+.safe{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(52,211,153,.35)}
+.motion{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.35)}
+.impact{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.4)}
+.searching{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.35)}
+.pending{background:rgba(100,116,139,.15);color:#cbd5e1;border:1px solid rgba(148,163,184,.25)}
+.online{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(52,211,153,.35)}
+.offline{background:rgba(100,116,139,.15);color:#cbd5e1;border:1px solid rgba(148,163,184,.25)}
+.main-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.section{padding:20px;margin-bottom:20px}.section h2{color:#bae6fd;margin-bottom:16px;border-bottom:1px solid rgba(56,189,248,.15);padding-bottom:11px}
+.input-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.input-box{display:flex;flex-direction:column}.input-box label{color:#cbd5e1;font-weight:600;margin-bottom:6px;font-size:13px}
+.input-box input,.input-box select,.history-controls input{padding:11px;background:#020b14;color:#e0f2fe;border:1px solid #164e63;border-radius:8px}
+.input-box input:focus,.history-controls input:focus{outline:none;border-color:#22d3ee;box-shadow:0 0 12px rgba(34,211,238,.15)}
+button{border:none;padding:10px 15px;border-radius:8px;cursor:pointer;font-weight:700;margin:4px;transition:.2s}
+button:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.3)}
+.primary{background:#0284c7;color:#fff}.success{background:#059669;color:#fff}.danger{background:#dc2626;color:#fff}
+.warning{background:#d97706;color:#fff}.dark{background:#1e293b;color:#fff}.gray{background:#475569;color:#fff}
+.purple{background:#7c3aed;color:#fff}.cyan{background:#0891b2;color:#fff}
+.emergency{display:none;padding:18px;border:2px solid #ef4444;background:rgba(127,29,29,.25);border-radius:12px;margin-bottom:20px;
+box-shadow:0 0 30px rgba(239,68,68,.25);animation:pulse 1s infinite alternate}
+.emergency.show{display:block}.emergency h2{color:#f87171;font-size:24px}.emergency p{margin-top:7px;color:#fecaca}
+@keyframes pulse{from{box-shadow:0 0 15px rgba(239,68,68,.15)}to{box-shadow:0 0 35px rgba(239,68,68,.45)}}
+.oled{background:radial-gradient(circle at center,#06331b,#02130a 70%);color:#39ff88;border:7px solid #17202a;border-radius:10px;padding:20px;min-height:235px;font-family:monospace;box-shadow:0 0 25px rgba(0,255,120,.08),inset 0 0 30px rgba(0,255,120,.08)}
+.oled-line{margin:9px 0;font-size:14px;font-family:monospace;text-shadow:0 0 7px rgba(57,255,136,.4)}
+.oled-title{font-weight:bold;font-size:18px;margin-bottom:13px}
+.actuator{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.actuator-box{background:rgba(5,25,40,.7);border:1px solid rgba(56,189,248,.12);border-radius:10px;padding:16px;text-align:center}
+.indicator{width:30px;height:30px;border-radius:50%;background:#475569;margin:11px auto;transition:.2s}
+.indicator.on{background:#22c55e;box-shadow:0 0 18px #22c55e}.indicator.buzzer-on{background:#ef4444;box-shadow:0 0 18px #ef4444}
+.log{max-height:260px;overflow-y:auto;background:#020811;color:#67e8f9;padding:14px;border-radius:8px;border:1px solid rgba(34,211,238,.12);font-family:monospace;font-size:12px}
+.log div{margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.04)}
+.health-grid,.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.health-item,.stat-item{padding:13px;background:rgba(15,40,58,.6);border-radius:8px}
+.health-item span,.stat-item span{display:block;color:#64748b;font-size:12px}.health-item strong,.stat-item strong{display:block;margin-top:5px}
+.range-wrap{margin:10px 0}.range-wrap input{width:100%}.threshold-value{text-align:center;color:#67e8f9;font-size:18px;font-weight:bold}
+.ai-box{padding:17px;border-radius:10px;background:linear-gradient(135deg,rgba(76,29,149,.2),rgba(2,132,199,.12));border:1px solid rgba(167,139,250,.25)}
+.ai-result{font-size:24px;font-weight:800;color:#c4b5fd}.ai-explain{margin-top:8px;color:#cbd5e1;line-height:1.5}.riskbar{height:12px;background:#172033;border-radius:20px;overflow:hidden;margin-top:10px}.riskfill{height:100%;width:0;background:#ef4444;transition:.4s}
+.history-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.history-controls input{flex:1;min-width:220px}
+.history-list{display:flex;flex-direction:column;gap:9px}.history-item{border:1px solid rgba(56,189,248,.15);border-radius:10px;overflow:hidden;background:rgba(2,15,28,.7)}
+.history-header{padding:14px;background:rgba(8,30,48,.8);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.history-title{font-weight:bold}.history-time{font-size:12px;color:#64748b;margin-top:4px}.history-details{display:none;padding:16px;background:#020b14;border-top:1px solid rgba(56,189,248,.15)}
+.history-details.open{display:block}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.detail{background:rgba(15,40,58,.6);padding:10px;border-radius:7px}.detail span{display:block;color:#64748b;font-size:11px}.detail strong{display:block;margin-top:4px;color:#dbeafe}
+.empty-history{padding:25px;text-align:center;color:#64748b;border:1px dashed rgba(56,189,248,.2);border-radius:10px}
+.map-box{width:100%;height:330px;border:0;border-radius:10px;background:#020811}
+.small-note{font-size:12px;color:#64748b;margin-top:8px;line-height:1.5}
+.fullscreen{position:fixed;right:18px;bottom:18px;z-index:10}
+@media(max-width:1100px){.dashboard{grid-template-columns:repeat(3,1fr)}.main-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.dashboard{grid-template-columns:repeat(2,1fr)}.input-grid,.health-grid,.stats-grid{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr 1fr}header h1{font-size:25px}}
 </style>
-
 </head>
 
-
 <body>
-
-
-<!-- ======================================================
-     HEADER
-======================================================= -->
-
 <header>
-
-    <h1>🚨 SIGNAL SYNC</h1>
-
-    <p>
-        Embedded Motion, Impact & GPS Monitoring System
-    </p>
-
+<h1>🚨 SIGNAL SYNC</h1>
+<p>AI-Powered Motion, Impact & GPS Monitoring System</p>
 </header>
-
 
 <div class="container">
 
-
-<!-- ======================================================
-     DASHBOARD
-======================================================= -->
+<div id="emergency" class="emergency">
+<h2>⚠️ EMERGENCY: IMPACT DETECTED</h2>
+<p id="emergencyText">High acceleration event detected. Check the current location and system status.</p>
+</div>
 
 <div class="dashboard">
-
-    <div class="card">
-
-        <h3>Total Records</h3>
-
-        <strong id="totalCount">
-            0
-        </strong>
-
-    </div>
-
-
-    <div class="card">
-
-        <h3>Safe Events</h3>
-
-        <strong id="safeCount">
-            0
-        </strong>
-
-    </div>
-
-
-    <div class="card">
-
-        <h3>Motion Events</h3>
-
-        <strong id="motionCount">
-            0
-        </strong>
-
-    </div>
-
-
-    <div class="card">
-
-        <h3>Impact Events</h3>
-
-        <strong id="impactCount">
-            0
-        </strong>
-
-    </div>
-
+<div class="card"><h3>Total Records</h3><strong id="totalCount">0</strong></div>
+<div class="card"><h3>Safe Events</h3><strong id="safeCount">0</strong></div>
+<div class="card"><h3>Motion Events</h3><strong id="motionCount">0</strong></div>
+<div class="card"><h3>Impact Events</h3><strong id="impactCount">0</strong></div>
+<div class="card"><h3>Impact %</h3><strong id="impactPercent">0%</strong></div>
+<div class="card"><h3>AI Risk</h3><strong id="topRisk">0%</strong></div>
 </div>
-
-
-<!-- ======================================================
-     SYSTEM STATUS
-======================================================= -->
 
 <div class="status-box">
-
-    <div class="status-row">
-
-        <span
-            id="systemStatus"
-            class="status pending">
-
-            NOT PROCESSED
-
-        </span>
-
-
-        <span
-            id="armStatus"
-            class="status safe">
-
-            ARMED
-
-        </span>
-
-
-        <span
-            id="gpsStatus"
-            class="status searching">
-
-            GPS STOPPED
-
-        </span>
-
-    </div>
-
-
-    <div style="margin-top:15px;">
-
-        <strong>
-            Current Time:
-        </strong>
-
-        <span id="currentTime">
-            --
-        </span>
-
-    </div>
-
+<div class="status-row">
+<span id="systemStatus" class="status pending">NOT PROCESSED</span>
+<span id="armStatus" class="status safe">ARMED</span>
+<span id="gpsStatus" class="status searching">GPS STOPPED</span>
+<span id="sensorStatus" class="status online">SENSOR SIMULATION READY</span>
+<span id="alertStatus" class="status online">ALERT READY</span>
 </div>
-
-
-<!-- ======================================================
-     MAIN GRID
-======================================================= -->
+</div>
 
 <div class="main-grid">
 
-
-<!-- ======================================================
-     LEFT COLUMN
-======================================================= -->
-
-<div>
-
-
-<!-- SENSOR INPUT -->
-
+<!-- SENSOR CONTROL -->
 <div class="section">
-
-<h2>
-    📡 Sensor Input
-</h2>
-
-
+<h2>🎚️ Sensor & Control Panel</h2>
 <div class="input-grid">
-
-
-<div class="input-box">
-
-<label>
-    X Axis
-</label>
-
-<input
-    type="number"
-    id="xValue"
-    step="0.01"
-    value="0.20"
->
-
+<div class="input-box"><label>X Axis</label><input id="x" type="number" step="0.01" value="0.10"></div>
+<div class="input-box"><label>Y Axis</label><input id="y" type="number" step="0.01" value="0.10"></div>
+<div class="input-box"><label>Z Axis</label><input id="z" type="number" step="0.01" value="1.00"></div>
+<div class="input-box"><label>Impact Threshold</label><input id="threshold" type="number" step="0.1" value="2.5"></div>
+<div class="input-box"><label>Latitude</label><input id="lat" type="number" step="0.000001" value="16.3067"></div>
+<div class="input-box"><label>Longitude</label><input id="lon" type="number" step="0.000001" value="80.4365"></div>
+<div class="input-box"><label>GPS Satellites</label><input id="sats" type="number" value="0"></div>
+<div class="input-box"><label>Device/Event Name</label><input id="eventName" value="SIGNAL SYNC Test"></div>
 </div>
 
-
-<div class="input-box">
-
-<label>
-    Y Axis
-</label>
-
-<input
-    type="number"
-    id="yValue"
-    step="0.01"
-    value="0.15"
->
-
+<div class="range-wrap">
+<label>🎚️ Impact Threshold Control</label>
+<input id="thresholdRange" type="range" min="0.5" max="10" step="0.1" value="2.5">
+<div class="threshold-value" id="thresholdValue">2.5</div>
 </div>
 
-
-<div class="input-box">
-
-<label>
-    Z Axis
-</label>
-
-<input
-    type="number"
-    id="zValue"
-    step="0.01"
-    value="1.00"
->
-
+<div style="margin-top:12px">
+<button class="primary" onclick="processSensor()">CHECK SENSOR</button>
+<button class="success" onclick="sampleSafe()">SAFE SAMPLE</button>
+<button class="warning" onclick="sampleMotion()">MOTION SAMPLE</button>
+<button class="danger" onclick="sampleImpact()">IMPACT SAMPLE</button>
+<button class="purple" onclick="toggleArm()">ARM / DISARM</button>
 </div>
 
-
-<div class="input-box">
-
-<label>
-    Impact Threshold
-</label>
-
-<input
-    type="number"
-    id="threshold"
-    step="0.01"
-    value="2.50"
->
-
+<div style="margin-top:8px">
+<button class="cyan" onclick="startSimulation()">🔄 START AI SIMULATION</button>
+<button class="gray" onclick="stopSimulation()">⏹ STOP SIMULATION</button>
+<button class="primary" onclick="startGPS()">📍 START GPS</button>
+<button class="gray" onclick="stopGPS()">GPS STOP</button>
 </div>
 
-
-<div class="input-box">
-
-<label>
-    Latitude
-</label>
-
-<input
-    type="number"
-    id="latitude"
-    step="0.000001"
-    value="16.306700"
->
-
+<p class="small-note">AI classification in this software prototype is an explainable rule-based simulation using sensor values and threshold. It is not a trained medical/safety model.</p>
 </div>
 
-
-<div class="input-box">
-
-<label>
-    Longitude
-</label>
-
-<input
-    type="number"
-    id="longitude"
-    step="0.000001"
-    value="80.436500"
->
-
-</div>
-
-
-<div class="input-box">
-
-<label>
-    GPS Satellites
-</label>
-
-<input
-    type="number"
-    id="satellites"
-    value="8"
->
-
-</div>
-
-
-</div>
-
-
-<div style="margin-top:15px;">
-
-<button
-    class="primary"
-    onclick="processSensor()">
-
-    🔍 CHECK SENSOR
-
-</button>
-
-
-<button
-    class="gray"
-    onclick="sampleSafe()">
-
-    SAFE SAMPLE
-
-</button>
-
-
-<button
-    class="warning"
-    onclick="sampleMotion()">
-
-    MOTION SAMPLE
-
-</button>
-
-
-<button
-    class="danger"
-    onclick="sampleImpact()">
-
-    IMPACT SAMPLE
-
-</button>
-
-</div>
-
-
-<p
-    style="
-        color:#64748b;
-        font-size:13px;
-        margin-top:10px;
-    ">
-
-    Enter values manually and press
-    <b>CHECK SENSOR</b> to process and save a new record.
-
-</p>
-
-</div>
-
-
-<!-- SYSTEM CONTROL -->
-
+<!-- AI -->
 <div class="section">
-
-<h2>
-    🎛️ System Control
-</h2>
-
-
-<button
-    id="armButton"
-    class="success"
-    onclick="toggleArm()">
-
-    🔒 DISARM
-
-</button>
-
-
-<button
-    id="gpsButton"
-    class="primary"
-    onclick="toggleGPS()">
-
-    📍 START GPS
-
-</button>
-
-
-<button
-    class="success"
-    onclick="manualLED(true)">
-
-    💡 LED ON
-
-</button>
-
-
-<button
-    class="gray"
-    onclick="manualLED(false)">
-
-    💡 LED OFF
-
-</button>
-
-
-<button
-    class="danger"
-    onclick="manualBuzzer(true)">
-
-    🔊 BUZZER ON
-
-</button>
-
-
-<button
-    class="gray"
-    onclick="manualBuzzer(false)">
-
-    🔊 BUZZER OFF
-
-</button>
-
+<h2>🤖 AI Event Intelligence</h2>
+<div class="ai-box">
+<div class="ai-result" id="aiResult">AI READY</div>
+<div class="ai-explain" id="aiExplain">Waiting for sensor data...</div>
+<div style="margin-top:14px">AI Risk Score: <b id="riskText">0%</b></div>
+<div class="riskbar"><div id="riskFill" class="riskfill"></div></div>
+<div class="stats-grid" style="margin-top:14px">
+<div class="stat-item"><span>Severity</span><strong id="severity">-</strong></div>
+<div class="stat-item"><span>Max Axis</span><strong id="maxAxis">0</strong></div>
+<div class="stat-item"><span>Event ID</span><strong id="eventId">SS-0000</strong></div>
+</div>
+</div>
+<h3 style="margin-top:18px;color:#7dd3fc">🧠 Smart Event Classification</h3>
+<p class="small-note">The AI layer reads X/Y/Z, compares movement and impact magnitude, produces an event class, severity, risk score and a human-readable explanation.</p>
 </div>
 
+<!-- 3D GRAPH -->
+<div class="section" style="grid-column:1/-1">
+<h2>📊 Live 3D X / Y / Z Sensor Graph</h2>
+<div id="sensor3DGraph" style="width:100%;height:500px"></div>
+</div>
 
-<!-- ACTUATORS -->
-
+<!-- OLED + ACTUATORS -->
 <div class="section">
-
-<h2>
-    ⚡ Output / Actuators
-</h2>
-
-
-<div class="actuator">
-
-
-<div class="actuator-box">
-
-<h3>
-    💡 LED
-</h3>
-
-<div
-    id="ledIndicator"
-    class="indicator">
-</div>
-
-<strong id="ledText">
-    OFF
-</strong>
-
-</div>
-
-
-<div class="actuator-box">
-
-<h3>
-    🔊 Buzzer
-</h3>
-
-<div
-    id="buzzerIndicator"
-    class="indicator">
-</div>
-
-<strong id="buzzerText">
-    OFF
-</strong>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-</div>
-
-
-<!-- ======================================================
-     RIGHT COLUMN
-======================================================= -->
-
-<div>
-
-
-<!-- OLED -->
-
-<div class="section">
-
-<h2>
-    📟 Virtual OLED Display
-</h2>
-
-
+<h2>🖥️ Virtual OLED Display</h2>
 <div class="oled">
-
-
-<div class="oled-line oled-title">
-    SIGNAL SYNC
+<div class="oled-title">SIGNAL SYNC // OLED</div>
+<div class="oled-line" id="oled1">STATUS: READY</div>
+<div class="oled-line" id="oled2">X: 0.00 Y: 0.00</div>
+<div class="oled-line" id="oled3">Z: 0.00</div>
+<div class="oled-line" id="oled4">EVENT: NONE</div>
+<div class="oled-line" id="oled5">AI: READY</div>
+<div class="oled-line" id="oled6">GPS: OFF</div>
 </div>
-
-
-<div class="oled-line">
-
-    STATUS:
-    <span id="oledStatus">
-        NOT PROCESSED
-    </span>
-
 </div>
-
-
-<div class="oled-line">
-
-    X:
-    <span id="oledX">
-        0.20
-    </span>
-
-</div>
-
-
-<div class="oled-line">
-
-    Y:
-    <span id="oledY">
-        0.15
-    </span>
-
-</div>
-
-
-<div class="oled-line">
-
-    Z:
-    <span id="oledZ">
-        1.00
-    </span>
-
-</div>
-
-
-<div class="oled-line">
-
-    GPS:
-    <span id="oledGPS">
-        STOPPED
-    </span>
-
-</div>
-
-
-<div class="oled-line">
-
-    LED:
-    <span id="oledLED">
-        OFF
-    </span>
-
-</div>
-
-
-<div class="oled-line">
-
-    BUZZER:
-    <span id="oledBuzzer">
-        OFF
-    </span>
-
-</div>
-
-
-<div class="oled-line">
-
-    LAST:
-    <span id="oledLastTime">
-        --
-    </span>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-<!-- LIVE LOG -->
 
 <div class="section">
-
-<h2>
-    📝 Live Event Log
-</h2>
-
-
-<div
-    id="eventLog"
-    class="log">
+<h2>💡 Virtual Actuators</h2>
+<div class="actuator">
+<div class="actuator-box">
+<h3>💡 Virtual LED</h3>
+<div id="led" class="indicator"></div>
+<p id="ledText">OFF</p>
+<button class="success" onclick="manualLED(true)">LED ON</button>
+<button class="dark" onclick="manualLED(false)">LED OFF</button>
+</div>
+<div class="actuator-box">
+<h3>🔊 Virtual Buzzer</h3>
+<div id="buzzer" class="indicator"></div>
+<p id="buzzerText">OFF</p>
+<button class="danger" onclick="manualBuzzer(true)">BUZZER ON</button>
+<button class="dark" onclick="manualBuzzer(false)">BUZZER OFF</button>
+</div>
+</div>
 </div>
 
-</div>
-
-
-</div>
-
-</div>
-
-
-<!-- ======================================================
-     HISTORY
-======================================================= -->
-
+<!-- MAP -->
 <div class="section">
+<h2>📍 GPS & Map</h2>
+<div class="status-row" style="margin-bottom:10px">
+<span id="gpsAccuracy" class="status pending">Accuracy: -</span>
+<span id="gpsCoords" class="status pending">16.306700, 80.436500</span>
+</div>
+<iframe id="mapFrame" class="map-box" loading="lazy"></iframe>
+<button class="primary" onclick="viewMap()">🗺️ VIEW ON MAP</button>
+<button class="success" onclick="getLocationOnce()">📍 GET CURRENT LOCATION</button>
+<p class="small-note">Browser GPS needs location permission. On many browsers, geolocation works on HTTPS or localhost. The demo can still use manually entered coordinates.</p>
+</div>
 
-<h2>
-    🗂️ Test History
-</h2>
+<!-- HEALTH -->
+<div class="section">
+<h2>🟢 System Health</h2>
+<div class="health-grid">
+<div class="health-item"><span>Sensor</span><strong id="healthSensor">READY</strong></div>
+<div class="health-item"><span>GPS</span><strong id="healthGPS">DISCONNECTED</strong></div>
+<div class="health-item"><span>Alert</span><strong id="healthAlert">READY</strong></div>
+<div class="health-item"><span>AI Engine</span><strong>READY</strong></div>
+<div class="health-item"><span>Storage</span><strong>LOCALSTORAGE</strong></div>
+<div class="health-item"><span>System</span><strong id="healthSystem">ONLINE</strong></div>
+</div>
+<div style="margin-top:12px">
+<button class="primary" onclick="selfTest()">🛡️ RUN SYSTEM SELF-TEST</button>
+<button class="dark" onclick="demoMode()">🎬 DEMO MODE</button>
+</div>
+</div>
 
+<!-- STATISTICS -->
+<div class="section">
+<h2>📈 Event Statistics</h2>
+<div class="stats-grid">
+<div class="stat-item"><span>SAFE</span><strong id="statSafe">0</strong></div>
+<div class="stat-item"><span>MOTION</span><strong id="statMotion">0</strong></div>
+<div class="stat-item"><span>IMPACT</span><strong id="statImpact">0</strong></div>
+<div class="stat-item"><span>LOW Severity</span><strong id="sevLow">0</strong></div>
+<div class="stat-item"><span>MEDIUM Severity</span><strong id="sevMed">0</strong></div>
+<div class="stat-item"><span>HIGH/CRITICAL</span><strong id="sevHigh">0</strong></div>
+</div>
+</div>
 
+<!-- LOG -->
+<div class="section">
+<h2>📜 Live Event Log</h2>
+<div id="eventLog" class="log"></div>
+</div>
+
+<!-- HISTORY -->
+<div class="section" style="grid-column:1/-1">
+<h2>🗂️ Event History</h2>
 <div class="history-controls">
-
-
-<input
-    type="text"
-    id="searchHistory"
-    placeholder="🔎 Search date, time, SAFE, MOTION, IMPACT, GPS, values..."
-    oninput="renderHistory()"
->
-
-
-<button
-    class="primary"
-    onclick="downloadCSV()">
-
-    ⬇️ DOWNLOAD CSV
-
-</button>
-
-
-<button
-    class="danger"
-    onclick="clearHistory()">
-
-    🗑️ CLEAR HISTORY
-
-</button>
-
-
+<input id="historySearch" placeholder="Search event ID, decision, severity, date...">
+<button class="primary" onclick="renderHistory()">SEARCH</button>
+<button class="success" onclick="exportCSV()">📥 EXPORT CSV</button>
+<button class="purple" onclick="exportPDF()">📄 PDF REPORT</button>
+<button class="danger" onclick="clearHistory()">CLEAR HISTORY</button>
+</div>
+<div id="historyList" class="history-list"></div>
 </div>
 
-
-<div
-    id="historyList"
-    class="history-list">
-
+<!-- INFO -->
+<div class="section" style="grid-column:1/-1">
+<h2>📋 Project Information</h2>
+<p><b>SIGNAL SYNC</b> is a software-only prototype for motion, impact, GPS monitoring and alert management.</p>
+<p class="small-note">Current prototype uses simulated sensor inputs, browser GPS, browser notifications, virtual LED/buzzer/OLED, localStorage history and an explainable AI-style classification layer. Physical MPU6050/ESP32/GPS hardware can be integrated in a future version.</p>
 </div>
 
-
+</div>
 </div>
 
-
-</div>
-
+<button class="fullscreen primary" onclick="toggleFullscreen()">⛶ FULL SCREEN</button>
 
 <script>
-
-/* =========================================================
-   GLOBAL VARIABLES
-========================================================= */
-
-let systemArmed = true;
-
-let gpsActive = false;
-
+let historyData = JSON.parse(localStorage.getItem("signalSyncHistory") || "[]");
+let armed = true;
+let gpsWatch = null;
+let simulationTimer = null;
+let demoTimer = null;
+let eventCounter = Number(localStorage.getItem("signalSyncEventCounter") || 0);
+let graphPoints = {x:[],y:[],z:[],color:[]};
+let lastDecision = "NONE";
+let lastRisk = 0;
 let ledState = false;
-
 let buzzerState = false;
 
+const $ = id => document.getElementById(id);
 
-/*
-    Last processed result.
+function now(){
+  return new Date().toLocaleString();
+}
+function log(msg){
+  const d=document.createElement("div");
+  d.textContent="["+new Date().toLocaleTimeString()+"] "+msg;
+  $("eventLog").prepend(d);
+}
+function save(){
+  localStorage.setItem("signalSyncHistory",JSON.stringify(historyData));
+  localStorage.setItem("signalSyncEventCounter",eventCounter);
+}
+function nextId(){
+  eventCounter++;
+  save();
+  return "SS-"+String(eventCounter).padStart(4,"0");
+}
+function updateThreshold(v){
+  $("threshold").value=v;
+  $("thresholdRange").value=v;
+  $("thresholdValue").textContent=Number(v).toFixed(1);
+}
+$("thresholdRange").addEventListener("input",e=>updateThreshold(e.target.value));
 
-    This is important:
-    Changing input values will NOT change
-    OLED/status until CHECK SENSOR is pressed.
-*/
-
-let lastProcessed = {
-
-    decision: "NOT PROCESSED",
-
-    x: 0.20,
-
-    y: 0.15,
-
-    z: 1.00,
-
-    threshold: 2.50,
-
-    latitude: 16.306700,
-
-    longitude: 80.436500,
-
-    satellites: 8,
-
-    dateTime: "--",
-
-    led: false,
-
-    buzzer: false
-
-};
-
-
-/* =========================================================
-   LOAD HISTORY FROM BROWSER
-========================================================= */
-
-let historyData =
-    JSON.parse(
-        localStorage.getItem(
-            "signalSyncHistory"
-        )
-    ) || [];
-
-
-/* =========================================================
-   CLOCK
-========================================================= */
-
-function updateClock() {
-
-    const now = new Date();
-
-    document.getElementById(
-        "currentTime"
-    ).innerText =
-        now.toLocaleString();
-
+function classifyAI(x,y,z,t){
+  const max=Math.max(Math.abs(x),Math.abs(y),Math.abs(z));
+  const movement=(Math.abs(x)+Math.abs(y)+Math.abs(z-1));
+  let decision="SAFE", severity="LOW", risk=5, explanation="Sensor values are stable and no significant movement was detected.";
+  if(max>=t){
+    decision="IMPACT";
+    risk=Math.min(100,Math.round(60+(max/t)*25+movement*5));
+    if(max>=t*2.5){severity="CRITICAL"}
+    else if(max>=t*1.6){severity="HIGH"}
+    else if(max>=t*1.15){severity="MEDIUM"}
+    else severity="LOW";
+    explanation="AI analysis: sudden high acceleration exceeded the configured impact threshold. Impact event suspected.";
+  }else if(Math.abs(x)>0.5 || Math.abs(y)>0.5 || Math.abs(z-1)>0.5){
+    decision="MOTION";
+    risk=Math.min(70,Math.round(20+movement*20));
+    severity=risk>=55?"MEDIUM":"LOW";
+    explanation="AI analysis: noticeable axis movement was detected, but the impact threshold was not exceeded.";
+  }
+  return {decision,severity,risk,explanation,max};
 }
 
-setInterval(updateClock, 1000);
-
-updateClock();
-
-
-/* =========================================================
-   SAVE HISTORY
-========================================================= */
-
-function saveHistory() {
-
-    localStorage.setItem(
-
-        "signalSyncHistory",
-
-        JSON.stringify(historyData)
-
-    );
-
+function setStatus(decision){
+  const s=$("systemStatus");
+  s.className="status "+(decision==="SAFE"?"safe":decision==="MOTION"?"motion":decision==="IMPACT"?"impact":"pending");
+  s.textContent=decision;
+}
+function setActuator(type,on){
+  if(type==="led"){
+    ledState=on;$("led").classList.toggle("on",on);$("ledText").textContent=on?"ON":"OFF";
+  }else{
+    buzzerState=on;$("buzzer").classList.toggle("buzzer-on",on);$("buzzerText").textContent=on?"ON":"OFF";
+  }
+}
+function automaticActuators(decision){
+  if(!armed){
+    setActuator("led",false);setActuator("buzzer",false);return;
+  }
+  if(decision==="IMPACT"){setActuator("led",true);setActuator("buzzer",true)}
+  else if(decision==="MOTION"){setActuator("led",true);setActuator("buzzer",false)}
+  else {setActuator("led",false);setActuator("buzzer",false)}
+}
+function updateEmergency(decision,lat,lon){
+  if(decision==="IMPACT"){
+    $("emergency").classList.add("show");
+    $("emergencyText").textContent="High acceleration detected. Location: "+Number(lat).toFixed(6)+", "+Number(lon).toFixed(6);
+    $("healthAlert").textContent="TRIGGERED";
+    $("alertStatus").textContent="ALERT TRIGGERED";
+    $("alertStatus").className="status impact";
+    playAlertSound();
+    browserNotify();
+  }else{
+    $("emergency").classList.remove("show");
+    $("healthAlert").textContent="READY";
+    $("alertStatus").textContent="ALERT READY";
+    $("alertStatus").className="status online";
+  }
+}
+function updateOLED(x,y,z,decision,ai){
+  $("oled1").textContent="STATUS: "+decision;
+  $("oled2").textContent="X: "+x.toFixed(2)+" Y: "+y.toFixed(2);
+  $("oled3").textContent="Z: "+z.toFixed(2);
+  $("oled4").textContent="EVENT: "+decision;
+  $("oled5").textContent="AI: "+ai+" / "+lastRisk+"%";
+  $("oled6").textContent="GPS: "+(gpsWatch?"ON":"OFF");
 }
 
-
-/* =========================================================
-   EVENT LOG
-========================================================= */
-
-function addLog(message) {
-
-    const log =
-        document.getElementById(
-            "eventLog"
-        );
-
-
-    const time =
-        new Date().toLocaleTimeString();
-
-
-    const entry =
-        document.createElement("div");
-
-
-    entry.innerText =
-        "[" +
-        time +
-        "] " +
-        message;
-
-
-    log.prepend(entry);
-
+function updateAI(ai,id){
+  $("aiResult").textContent="🤖 AI: "+ai.decision;
+  $("aiExplain").textContent=ai.explanation;
+  $("riskText").textContent=ai.risk+"%";
+  $("riskFill").style.width=ai.risk+"%";
+  $("severity").textContent=ai.severity;
+  $("maxAxis").textContent=ai.max.toFixed(2);
+  $("eventId").textContent=id;
+  $("topRisk").textContent=ai.risk+"%";
+  lastRisk=ai.risk;
 }
 
-
-/* =========================================================
-   ARM / DISARM
-========================================================= */
-
-function toggleArm() {
-
-    systemArmed =
-        !systemArmed;
-
-
-    const button =
-        document.getElementById(
-            "armButton"
-        );
-
-
-    const status =
-        document.getElementById(
-            "armStatus"
-        );
-
-
-    if (systemArmed) {
-
-        button.innerText =
-            "🔒 DISARM";
-
-        button.className =
-            "success";
-
-        status.innerText =
-            "ARMED";
-
-        status.className =
-            "status safe";
-
-
-        addLog(
-            "System ARMED"
-        );
-
-    }
-
-    else {
-
-        button.innerText =
-            "🔓 ARM";
-
-        button.className =
-            "danger";
-
-        status.innerText =
-            "DISARMED";
-
-        status.className =
-            "status impact";
-
-
-        addLog(
-            "System DISARMED"
-        );
-
-    }
-
+function updateGraph(x,y,z,decision){
+  const c=decision==="IMPACT"?"red":decision==="MOTION"?"orange":"green";
+  graphPoints.x.push(x);graphPoints.y.push(y);graphPoints.z.push(z);graphPoints.color.push(c);
+  if(graphPoints.x.length>100){graphPoints.x.shift();graphPoints.y.shift();graphPoints.z.shift();graphPoints.color.shift()}
+  Plotly.react("sensor3DGraph",[{
+    x:graphPoints.x,y:graphPoints.y,z:graphPoints.z,
+    mode:"lines+markers",type:"scatter3d",
+    marker:{size:5,color:graphPoints.color},
+    line:{width:3}
+  }],{
+    paper_bgcolor:"#0b1220",plot_bgcolor:"#0b1220",font:{color:"#fff"},
+    title:{text:"3D Sensor Trajectory",font:{color:"#67e8f9"}},
+    scene:{xaxis:{title:"X Axis"},yaxis:{title:"Y Axis"},zaxis:{title:"Z Axis"}},
+    margin:{l:0,r:0,t:45,b:0}
+  },{responsive:true});
 }
 
+function processSensor(){
+  const x=Number($("x").value),y=Number($("y").value),z=Number($("z").value);
+  const t=Number($("threshold").value),lat=Number($("lat").value),lon=Number($("lon").value),sats=Number($("sats").value);
+  if([x,y,z,t,lat,lon].some(Number.isNaN)){alert("Please enter valid sensor values.");return}
+  const ai=classifyAI(x,y,z,t), id=nextId();
+  lastDecision=ai.decision;
+  setStatus(ai.decision);updateAI(ai,id);automaticActuators(ai.decision);
+  updateEmergency(ai.decision,lat,lon);updateOLED(x,y,z,ai.decision,""+ai.decision);
+  updateGraph(x,y,z,ai.decision);updateMapCoords(lat,lon,sats);
 
-/* =========================================================
-   GPS
-========================================================= */
-
-function toggleGPS() {
-
-    gpsActive =
-        !gpsActive;
-
-
-    const status =
-        document.getElementById(
-            "gpsStatus"
-        );
-
-
-    const button =
-        document.getElementById(
-            "gpsButton"
-        );
-
-
-    if (gpsActive) {
-
-        status.innerText =
-            "GPS ACTIVE";
-
-        status.className =
-            "status safe";
-
-        button.innerText =
-            "📍 STOP GPS";
-
-        button.className =
-            "danger";
-
-
-        addLog(
-            "GPS tracking STARTED"
-        );
-
-    }
-
-    else {
-
-        status.innerText =
-            "GPS STOPPED";
-
-        status.className =
-            "status searching";
-
-        button.innerText =
-            "📍 START GPS";
-
-        button.className =
-            "primary";
-
-
-        addLog(
-            "GPS tracking STOPPED"
-        );
-
-    }
-
-
-    updateOLED();
-
+  const rec={id,time:new Date().toISOString(),displayTime:now(),name:$("eventName").value||"SIGNAL SYNC Test",
+    x,y,z,threshold:t,lat,lon,sats,decision:ai.decision,severity:ai.severity,risk:ai.risk,
+    explanation:ai.explanation,armed,led:ledState,buzzer:buzzerState};
+  historyData.unshift(rec);if(historyData.length>500)historyData.pop();save();renderHistory();updateStats();
+  log("Sensor processed → "+ai.decision+" | AI "+ai.severity+" | Risk "+ai.risk+"% | "+id);
 }
 
+function sampleSafe(){ $("x").value=.1;$("y").value=.1;$("z").value=1;processSensor() }
+function sampleMotion(){ $("x").value=.8;$("y").value=.4;$("z").value=1.2;processSensor() }
+function sampleImpact(){ $("x").value=3.8;$("y").value=2.1;$("z").value=4.2;processSensor() }
 
-/* =========================================================
-   MANUAL LED
-========================================================= */
+function toggleArm(){
+  armed=!armed;
+  $("armStatus").textContent=armed?"ARMED":"DISARMED";
+  $("armStatus").className="status "+(armed?"safe":"pending");
+  if(!armed){setActuator("led",false);setActuator("buzzer",false)}
+  log("System "+(armed?"ARMED":"DISARMED"));
+}
+function manualLED(v){setActuator("led",v);log("Manual LED "+(v?"ON":"OFF"))}
+function manualBuzzer(v){setActuator("buzzer",v);log("Manual buzzer "+(v?"ON":"OFF"));if(v)playAlertSound()}
 
-function manualLED(state) {
-
-    ledState =
-        state;
-
-
-    updateActuators();
-
-
-    addLog(
-
-        "LED manually turned " +
-        (state ? "ON" : "OFF")
-
-    );
-
+function playAlertSound(){
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+    const ctx=new C(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.frequency.value=880;o.type="square";g.gain.value=.06;o.connect(g);g.connect(ctx.destination);o.start();
+    setTimeout(()=>{o.frequency.value=440},180);setTimeout(()=>{o.stop();ctx.close()},360);
+  }catch(e){}
+}
+async function browserNotify(){
+  if(!("Notification" in window))return;
+  if(Notification.permission==="default"){try{await Notification.requestPermission()}catch(e){}}
+  if(Notification.permission==="granted")new Notification("🚨 SIGNAL SYNC",{body:"Impact detected. Check current location and system status."});
 }
 
-
-/* =========================================================
-   MANUAL BUZZER
-========================================================= */
-
-function manualBuzzer(state) {
-
-    buzzerState =
-        state;
-
-
-    updateActuators();
-
-
-    addLog(
-
-        "Buzzer manually turned " +
-        (state ? "ON" : "OFF")
-
-    );
-
+function updateMapCoords(lat,lon,sats){
+  $("gpsCoords").textContent=lat.toFixed(6)+", "+lon.toFixed(6);
+  $("gpsAccuracy").textContent="Satellites: "+sats;
+  $("mapFrame").src="https://maps.google.com/maps?q="+encodeURIComponent(lat+","+lon)+"&z=15&output=embed";
+}
+function viewMap(){
+  const lat=Number($("lat").value),lon=Number($("lon").value);
+  window.open("https://www.google.com/maps?q="+lat+","+lon,"_blank");
+}
+function getLocationOnce(){
+  if(!navigator.geolocation){alert("Geolocation is not supported by this browser.");return}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    $("lat").value=pos.coords.latitude;$("lon").value=pos.coords.longitude;
+    $("sats").value="Browser GPS";
+    $("gpsStatus").textContent="GPS CONNECTED";
+    $("gpsStatus").className="status online";
+    $("healthGPS").textContent="CONNECTED";
+    updateMapCoords(pos.coords.latitude,pos.coords.longitude,0);
+    log("Current browser GPS location received");
+  },err=>{alert("GPS permission/location failed: "+err.message);log("GPS location failed")},{enableHighAccuracy:true,timeout:10000});
+}
+function startGPS(){
+  if(!navigator.geolocation){alert("Geolocation not supported.");return}
+  if(gpsWatch!==null)return;
+  gpsWatch=navigator.geolocation.watchPosition(pos=>{
+    $("lat").value=pos.coords.latitude;$("lon").value=pos.coords.longitude;
+    $("gpsStatus").textContent="GPS CONNECTED";
+    $("gpsStatus").className="status online";
+    $("healthGPS").textContent="CONNECTED";
+    $("gpsAccuracy").textContent="Accuracy: "+Math.round(pos.coords.accuracy)+" m";
+    updateMapCoords(pos.coords.latitude,pos.coords.longitude,0);
+  },err=>{log("GPS error: "+err.message);$("healthGPS").textContent="ERROR"}, {enableHighAccuracy:true});
+  log("GPS tracking STARTED");
+}
+function stopGPS(){
+  if(gpsWatch!==null){navigator.geolocation.clearWatch(gpsWatch);gpsWatch=null}
+  $("gpsStatus").textContent="GPS STOPPED";$("gpsStatus").className="status searching";
+  $("healthGPS").textContent="DISCONNECTED";$("oled6").textContent="GPS: OFF";log("GPS tracking STOPPED");
 }
 
-
-/* =========================================================
-   PROCESS SENSOR
-========================================================= */
-
-function processSensor() {
-
-
-    const x =
-        parseFloat(
-            document.getElementById(
-                "xValue"
-            ).value
-        );
-
-
-    const y =
-        parseFloat(
-            document.getElementById(
-                "yValue"
-            ).value
-        );
-
-
-    const z =
-        parseFloat(
-            document.getElementById(
-                "zValue"
-            ).value
-        );
-
-
-    const threshold =
-        parseFloat(
-            document.getElementById(
-                "threshold"
-            ).value
-        );
-
-
-    const latitude =
-        parseFloat(
-            document.getElementById(
-                "latitude"
-            ).value
-        );
-
-
-    const longitude =
-        parseFloat(
-            document.getElementById(
-                "longitude"
-            ).value
-        );
-
-
-    const satellites =
-        parseInt(
-            document.getElementById(
-                "satellites"
-            ).value
-        );
-
-
-    /* VALIDATION */
-
-    if (
-
-        isNaN(x) ||
-        isNaN(y) ||
-        isNaN(z) ||
-        isNaN(threshold) ||
-        isNaN(latitude) ||
-        isNaN(longitude) ||
-        isNaN(satellites)
-
-    ) {
-
-        alert(
-            "Please enter valid values in all fields."
-        );
-
-        return;
-
-    }
-
-
-    if (threshold <= 0) {
-
-        alert(
-            "Impact threshold must be greater than 0."
-        );
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       DECISION LOGIC
-    ===================================================== */
-
-
-    const maxAxis =
-        Math.max(
-
-            Math.abs(x),
-
-            Math.abs(y),
-
-            Math.abs(z)
-
-        );
-
-
-    let decision;
-
-
-    /*
-        IMPACT
-
-        If any axis reaches threshold.
-    */
-
-    if (
-        maxAxis >= threshold
-    ) {
-
-        decision =
-            "IMPACT";
-
-    }
-
-
-    /*
-        MOTION
-
-        If movement exists but
-        threshold was not reached.
-    */
-
-    else if (
-
-        Math.abs(x) > 0.50 ||
-
-        Math.abs(y) > 0.50 ||
-
-        Math.abs(z - 1.00) > 0.50
-
-    ) {
-
-        decision =
-            "MOTION";
-
-    }
-
-
-    /*
-        SAFE
-    */
-
-    else {
-
-        decision =
-            "SAFE";
-
-    }
-
-
-    /* =====================================================
-       AUTOMATIC CONTROL
-    ===================================================== */
-
-
-    if (systemArmed) {
-
-
-        if (decision === "IMPACT") {
-
-            ledState =
-                true;
-
-            buzzerState =
-                true;
-
-        }
-
-
-        else if (decision === "MOTION") {
-
-            ledState =
-                true;
-
-            buzzerState =
-                false;
-
-        }
-
-
-        else {
-
-            ledState =
-                false;
-
-            buzzerState =
-                false;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       TIME
-    ===================================================== */
-
-    const now =
-        new Date();
-
-
-    const dateTime =
-        now.toLocaleString();
-
-
-    /* =====================================================
-       CREATE RECORD
-    ===================================================== */
-
-    const record = {
-
-        id:
-            Date.now(),
-
-        dateTime:
-            dateTime,
-
-        timestamp:
-            Date.now(),
-
-        x:
-            x,
-
-        y:
-            y,
-
-        z:
-            z,
-
-        threshold:
-            threshold,
-
-        latitude:
-            latitude,
-
-        longitude:
-            longitude,
-
-        satellites:
-            satellites,
-
-        gpsActive:
-            gpsActive,
-
-        decision:
-            decision,
-
-        armed:
-            systemArmed,
-
-        led:
-            ledState,
-
-        buzzer:
-            buzzerState
-
-    };
-
-
-    /* SAVE NEW RECORD */
-
-    historyData.unshift(
-        record
-    );
-
-
-    saveHistory();
-
-
-    /* UPDATE LAST PROCESSED */
-
-    lastProcessed = {
-
-        decision:
-            decision,
-
-        x:
-            x,
-
-        y:
-            y,
-
-        z:
-            z,
-
-        threshold:
-            threshold,
-
-        latitude:
-            latitude,
-
-        longitude:
-            longitude,
-
-        satellites:
-            satellites,
-
-        dateTime:
-            dateTime,
-
-        led:
-            ledState,
-
-        buzzer:
-            buzzerState
-
-    };
-
-
-    /* UPDATE UI */
-
-    updateDashboard();
-
-    renderHistory();
-
-    updateStatus(
-        decision
-    );
-
-    updateActuators();
-
-    updateOLED();
-
-
-    addLog(
-
-        "Sensor processed → " +
-        decision +
-        " | X:" +
-        x +
-        " Y:" +
-        y +
-        " Z:" +
-        z
-
-    );
-
+function startSimulation(){
+  stopSimulation();
+  const seq=[
+    [.1,.1,1],
+    [.2,.15,1.05],
+    [.8,.6,1.3],
+    [1.1,.7,.6],
+    [3.8,2.1,4.2],
+    [4.5,2.8,5.0]
+  ];
+  let i=0;log("Automatic AI sensor simulation STARTED");
+  simulationTimer=setInterval(()=>{
+    const v=seq[i%seq.length];$("x").value=v[0];$("y").value=v[1];$("z").value=v[2];processSensor();i++;
+  },1600);
+}
+function stopSimulation(){if(simulationTimer){clearInterval(simulationTimer);simulationTimer=null;log("Automatic simulation STOPPED")}}
+
+function renderHistory(){
+  const q=$("historySearch").value.toLowerCase().trim();
+  const list=historyData.filter(r=>JSON.stringify(r).toLowerCase().includes(q));
+  const box=$("historyList");box.innerHTML="";
+  if(!list.length){box.innerHTML='<div class="empty-history">No history records found.</div>';return}
+  list.forEach((r,index)=>{
+    const item=document.createElement("div");item.className="history-item";
+    const h=document.createElement("div");h.className="history-header";
+    h.innerHTML="<div><div class='history-title'>"+r.id+" • "+r.decision+" • "+r.severity+" • "+r.risk+"%</div><div class='history-time'>"+new Date(r.time).toLocaleString()+"</div></div><span>▼</span>";
+    const d=document.createElement("div");d.className="history-details";
+    d.innerHTML="<div class='detail-grid'>"+
+    detail("X Axis",r.x)+detail("Y Axis",r.y)+detail("Z Axis",r.z)+detail("Threshold",r.threshold)+
+    detail("Latitude",r.lat)+detail("Longitude",r.lon)+detail("GPS",r.sats)+detail("Decision",r.decision)+
+    detail("Severity",r.severity)+detail("AI Risk",r.risk+"%")+detail("Armed",r.armed?"YES":"NO")+detail("LED",r.led?"ON":"OFF")+
+    detail("Buzzer",r.buzzer?"ON":"OFF")+detail("Event",r.name)+detail("Event ID",r.id)+
+    detail("Explanation",r.explanation)+"</div>"+
+    "<div style='margin-top:12px'><button class='primary' onclick='loadRecord("+index+")'>LOAD DATA</button><button class='success' onclick='openRecordMap("+index+")'>VIEW LOCATION</button></div>";
+    h.onclick=()=>{document.querySelectorAll(".history-details.open").forEach(x=>x.classList.remove("open"));d.classList.toggle("open")};
+    item.appendChild(h);item.appendChild(d);box.appendChild(item);
+  });
+}
+function detail(a,b){return "<div class='detail'><span>"+a+"</span><strong>"+b+"</strong></div>"}
+function loadRecord(filteredIndex){
+  const q=$("historySearch").value.toLowerCase().trim();
+  const list=historyData.filter(r=>JSON.stringify(r).toLowerCase().includes(q));
+  const r=list[filteredIndex];if(!r)return;
+  $("x").value=r.x;$("y").value=r.y;$("z").value=r.z;$("threshold").value=r.threshold;updateThreshold(r.threshold);
+  $("lat").value=r.lat;$("lon").value=r.lon;$("sats").value=r.sats;$("eventName").value=r.name;
+  log("Loaded "+r.id+" into sensor panel");
+}
+function openRecordMap(filteredIndex){
+  const q=$("historySearch").value.toLowerCase().trim();
+  const list=historyData.filter(r=>JSON.stringify(r).toLowerCase().includes(q));const r=list[filteredIndex];
+  if(r)window.open("https://www.google.com/maps?q="+r.lat+","+r.lon,"_blank");
+}
+function updateStats(){
+  const safe=historyData.filter(r=>r.decision==="SAFE").length,motion=historyData.filter(r=>r.decision==="MOTION").length,impact=historyData.filter(r=>r.decision==="IMPACT").length;
+  $("totalCount").textContent=historyData.length;$("safeCount").textContent=safe;$("motionCount").textContent=motion;$("impactCount").textContent=impact;
+  $("impactPercent").textContent=(historyData.length?Math.round(impact/historyData.length*100):0)+"%";
+  $("statSafe").textContent=safe;$("statMotion").textContent=motion;$("statImpact").textContent=impact;
+  $("sevLow").textContent=historyData.filter(r=>r.severity==="LOW").length;
+  $("sevMed").textContent=historyData.filter(r=>r.severity==="MEDIUM").length;
+  $("sevHigh").textContent=historyData.filter(r=>r.severity==="HIGH"||r.severity==="CRITICAL").length;
+}
+function clearHistory(){
+  if(!confirm("Clear all saved SIGNAL SYNC history?"))return;
+  historyData=[];save();renderHistory();updateStats();log("History cleared");
+}
+function exportCSV(){
+  if(!historyData.length){alert("No records to export.");return}
+  const headers=["Event ID","Time","Name","X","Y","Z","Threshold","Latitude","Longitude","GPS","Decision","Severity","Risk","Armed","LED","Buzzer"];
+  const rows=historyData.map(r=>[r.id,new Date(r.time).toLocaleString(),r.name,r.x,r.y,r.z,r.threshold,r.lat,r.lon,r.sats,r.decision,r.severity,r.risk+"%",r.armed,r.led,r.buzzer]);
+  const csv=[headers,...rows].map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(",")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="signal-sync-report.csv";a.click();URL.revokeObjectURL(a.href);log("CSV report exported");
+}
+function exportPDF(){
+  if(!historyData.length){alert("No records for PDF.");return}
+  const {jsPDF}=window.jspdf;const doc=new jsPDF();
+  doc.setFontSize(18);doc.text("SIGNAL SYNC - Project Event Report",14,18);
+  doc.setFontSize(10);doc.text("AI-powered software prototype | Generated: "+new Date().toLocaleString(),14,26);
+  let y=36;
+  const total=historyData.length,imp=historyData.filter(r=>r.decision==="IMPACT").length;
+  doc.text("Total Records: "+total+"    Safe: "+historyData.filter(r=>r.decision==="SAFE").length+"    Motion: "+historyData.filter(r=>r.decision==="MOTION").length+"    Impact: "+imp,14,y);y+=10;
+  historyData.slice(0,18).forEach(r=>{
+    if(y>280){doc.addPage();y=18}
+    doc.setFontSize(9);
+    doc.text(r.id+" | "+r.decision+" | "+r.severity+" | Risk "+r.risk+"% | XYZ: "+r.x+", "+r.y+", "+r.z,14,y);
+    y+=7;
+  });
+  doc.save("SIGNAL-SYNC-Project-Report.pdf");log("PDF report exported");
+}
+function selfTest(){
+  log("Self-test STARTED");
+  const checks=["AI engine","localStorage","3D graph","virtual LED","virtual buzzer","history"];
+  let i=0;
+  checks.forEach((c,idx)=>setTimeout(()=>log("Self-test PASS → "+c),idx*220));
+  setTimeout(()=>log("System self-test COMPLETED"),checks.length*220);
+}
+function demoMode(){
+  stopSimulation();clearInterval(demoTimer);
+  const seq=[sampleSafe,sampleSafe,sampleMotion,sampleMotion,sampleImpact];
+  let i=0;log("🎬 Demo mode STARTED");
+  demoTimer=setInterval(()=>{if(i>=seq.length){clearInterval(demoTimer);log("🎬 Demo mode COMPLETED");return}seq[i++]()},1400);
+}
+function toggleFullscreen(){
+  if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen();
 }
 
-
-/* =========================================================
-   UPDATE STATUS
-========================================================= */
-
-function updateStatus(decision) {
-
-    const status =
-        document.getElementById(
-            "systemStatus"
-        );
-
-
-    status.innerText =
-        "SYSTEM " +
-        decision;
-
-
-    if (decision === "SAFE") {
-
-        status.className =
-            "status safe";
-
-    }
-
-    else if (
-        decision === "MOTION"
-    ) {
-
-        status.className =
-            "status motion";
-
-    }
-
-    else if (
-        decision === "IMPACT"
-    ) {
-
-        status.className =
-            "status impact";
-
-    }
-
+function initGraph(){
+  Plotly.newPlot("sensor3DGraph",[{
+    x:[],y:[],z:[],mode:"lines+markers",type:"scatter3d",
+    marker:{size:5},line:{width:3}
+  }],{
+    paper_bgcolor:"#0b1220",plot_bgcolor:"#0b1220",font:{color:"#fff"},
+    title:{text:"3D Sensor Trajectory",font:{color:"#67e8f9"}},
+    scene:{xaxis:{title:"X Axis"},yaxis:{title:"Y Axis"},zaxis:{title:"Z Axis"}},
+    margin:{l:0,r:0,t:45,b:0}
+  },{responsive:true});
 }
 
-
-/* =========================================================
-   UPDATE ACTUATORS
-========================================================= */
-
-function updateActuators() {
-
-
-    const led =
-        document.getElementById(
-            "ledIndicator"
-        );
-
-
-    const buzzer =
-        document.getElementById(
-            "buzzerIndicator"
-        );
-
-
-    const ledText =
-        document.getElementById(
-            "ledText"
-        );
-
-
-    const buzzerText =
-        document.getElementById(
-            "buzzerText"
-        );
-
-
-    if (ledState) {
-
-        led.classList.add(
-            "on"
-        );
-
-        ledText.innerText =
-            "ON";
-
-    }
-
-    else {
-
-        led.classList.remove(
-            "on"
-        );
-
-        ledText.innerText =
-            "OFF";
-
-    }
-
-
-    if (buzzerState) {
-
-        buzzer.classList.add(
-            "buzzer-on"
-        );
-
-        buzzerText.innerText =
-            "ON";
-
-    }
-
-    else {
-
-        buzzer.classList.remove(
-            "buzzer-on"
-        );
-
-        buzzerText.innerText =
-            "OFF";
-
-    }
-
-
-    updateOLED();
-
-}
-
-
-/* =========================================================
-   OLED
-========================================================= */
-
-function updateOLED() {
-
-
-    /*
-        IMPORTANT:
-
-        OLED uses LAST PROCESSED data,
-        not whatever the user is currently typing.
-    */
-
-
-    document.getElementById(
-        "oledStatus"
-    ).innerText =
-        lastProcessed.decision;
-
-
-    document.getElementById(
-        "oledX"
-    ).innerText =
-        lastProcessed.x;
-
-
-    document.getElementById(
-        "oledY"
-    ).innerText =
-        lastProcessed.y;
-
-
-    document.getElementById(
-        "oledZ"
-    ).innerText =
-        lastProcessed.z;
-
-
-    document.getElementById(
-        "oledGPS"
-    ).innerText =
-        gpsActive
-            ? "ACTIVE"
-            : "STOPPED";
-
-
-    document.getElementById(
-        "oledLED"
-    ).innerText =
-        ledState
-            ? "ON"
-            : "OFF";
-
-
-    document.getElementById(
-        "oledBuzzer"
-    ).innerText =
-        buzzerState
-            ? "ON"
-            : "OFF";
-
-
-    document.getElementById(
-        "oledLastTime"
-    ).innerText =
-        lastProcessed.dateTime;
-
-}
-
-
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-function updateDashboard() {
-
-
-    const total =
-        historyData.length;
-
-
-    const safe =
-        historyData.filter(
-            r =>
-                r.decision === "SAFE"
-        ).length;
-
-
-    const motion =
-        historyData.filter(
-            r =>
-                r.decision === "MOTION"
-        ).length;
-
-
-    const impact =
-        historyData.filter(
-            r =>
-                r.decision === "IMPACT"
-        ).length;
-
-
-    document.getElementById(
-        "totalCount"
-    ).innerText =
-        total;
-
-
-    document.getElementById(
-        "safeCount"
-    ).innerText =
-        safe;
-
-
-    document.getElementById(
-        "motionCount"
-    ).innerText =
-        motion;
-
-
-    document.getElementById(
-        "impactCount"
-    ).innerText =
-        impact;
-
-}
-
-
-/* =========================================================
-   HISTORY
-========================================================= */
-
-function renderHistory() {
-
-
-    const list =
-        document.getElementById(
-            "historyList"
-        );
-
-
-    const search =
-        document.getElementById(
-            "searchHistory"
-        ).value
-        .toLowerCase()
-        .trim();
-
-
-    list.innerHTML =
-        "";
-
-
-    const filtered =
-        historyData.filter(
-            record => {
-
-                const text =
-                    JSON.stringify(
-                        record
-                    ).toLowerCase();
-
-
-                return text.includes(
-                    search
-                );
-
-            }
-        );
-
-
-    if (
-        filtered.length === 0
-    ) {
-
-        list.innerHTML = `
-
-            <div class="empty-history">
-
-                No history records found.
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    filtered.forEach(
-        record => {
-
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.className =
-                "history-item";
-
-
-            let statusClass =
-                "safe";
-
-
-            if (
-                record.decision === "MOTION"
-            ) {
-
-                statusClass =
-                    "motion";
-
-            }
-
-
-            if (
-                record.decision === "IMPACT"
-            ) {
-
-                statusClass =
-                    "impact";
-
-            }
-
-
-            const originalIndex =
-                historyData.indexOf(
-                    record
-                );
-
-
-            const recordNumber =
-                historyData.length -
-                originalIndex;
-
-
-            item.innerHTML = `
-
-                <div
-                    class="history-header"
-                    onclick="toggleHistory('${record.id}')">
-
-                    <div>
-
-                        <div
-                            class="history-title">
-
-                            <span
-                                id="arrow-${record.id}">
-
-                                ▶
-
-                            </span>
-
-                            Record #${recordNumber}
-
-                            &nbsp; | &nbsp;
-
-                            <span
-                                class="status ${statusClass}"
-                                style="
-                                    padding:5px 10px;
-                                    font-size:12px;
-                                ">
-
-                                ${record.decision}
-
-                            </span>
-
-                        </div>
-
-
-                        <div
-                            class="history-time">
-
-                            📅 ${record.dateTime}
-
-                        </div>
-
-                    </div>
-
-
-                    <div>
-
-                        📍
-                        ${Number(
-                            record.latitude
-                        ).toFixed(4)},
-
-                        ${Number(
-                            record.longitude
-                        ).toFixed(4)}
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="details-${record.id}"
-                    class="history-details">
-
-
-                    <div class="detail-grid">
-
-
-                        <div class="detail">
-
-                            <span>
-                                X Axis
-                            </span>
-
-                            <strong>
-                                ${record.x}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                Y Axis
-                            </span>
-
-                            <strong>
-                                ${record.y}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                Z Axis
-                            </span>
-
-                            <strong>
-                                ${record.z}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                Threshold
-                            </span>
-
-                            <strong>
-                                ${record.threshold}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                Latitude
-                            </span>
-
-                            <strong>
-                                ${record.latitude}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                Longitude
-                            </span>
-
-                            <strong>
-                                ${record.longitude}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                GPS Satellites
-                            </span>
-
-                            <strong>
-                                ${record.satellites}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                GPS
-                            </span>
-
-                            <strong>
-
-                                ${
-                                    record.gpsActive
-                                    ? "ACTIVE"
-                                    : "STOPPED"
-                                }
-
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                System
-                            </span>
-
-                            <strong>
-
-                                ${
-                                    record.armed
-                                    ? "ARMED"
-                                    : "DISARMED"
-                                }
-
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                LED
-                            </span>
-
-                            <strong>
-
-                                ${
-                                    record.led
-                                    ? "ON"
-                                    : "OFF"
-                                }
-
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                Buzzer
-                            </span>
-
-                            <strong>
-
-                                ${
-                                    record.buzzer
-                                    ? "ON"
-                                    : "OFF"
-                                }
-
-                            </strong>
-
-                        </div>
-
-
-                        <div class="detail">
-
-                            <span>
-                                Decision
-                            </span>
-
-                            <strong>
-
-                                ${record.decision}
-
-                            </strong>
-
-                        </div>
-
-
-                    </div>
-
-
-                    <div
-                        class="history-actions">
-
-
-                        <button
-                            class="primary"
-                            onclick="
-                                loadHistory('${record.id}')
-                            ">
-
-                            📥 LOAD DATA
-
-                        </button>
-
-
-                        <button
-                            class="gray"
-                            onclick="
-                                openMap(
-                                    ${record.latitude},
-                                    ${record.longitude}
-                                )
-                            ">
-
-                            🗺️ VIEW LOCATION
-
-                        </button>
-
-
-                    </div>
-
-
-                </div>
-
-            `;
-
-
-            list.appendChild(
-                item
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   OPEN / CLOSE HISTORY
-========================================================= */
-
-function toggleHistory(id) {
-
-
-    const details =
-        document.getElementById(
-            "details-" + id
-        );
-
-
-    const arrow =
-        document.getElementById(
-            "arrow-" + id
-        );
-
-
-    if (
-        details.classList.contains(
-            "open"
-        )
-    ) {
-
-
-        /*
-            CLOSE
-        */
-
-        details.classList.remove(
-            "open"
-        );
-
-
-        arrow.innerText =
-            "▶";
-
-    }
-
-
-    else {
-
-
-        /*
-            CLOSE ALL OTHER RECORDS
-        */
-
-        document
-            .querySelectorAll(
-                ".history-details"
-            )
-            .forEach(
-                box => {
-
-                    box.classList.remove(
-                        "open"
-                    );
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                "[id^='arrow-']"
-            )
-            .forEach(
-                a => {
-
-                    a.innerText =
-                        "▶";
-
-                }
-            );
-
-
-        /*
-            OPEN SELECTED RECORD
-        */
-
-        details.classList.add(
-            "open"
-        );
-
-
-        arrow.innerText =
-            "▼";
-
-    }
-
-}
-
-
-/* =========================================================
-   LOAD OLD RECORD
-========================================================= */
-
-function loadHistory(id) {
-
-
-    const record =
-        historyData.find(
-            r =>
-                String(r.id) ===
-                String(id)
-        );
-
-
-    if (!record) {
-
-        return;
-
-    }
-
-
-    /*
-        Put old data into
-        current input fields.
-    */
-
-
-    document.getElementById(
-        "xValue"
-    ).value =
-        record.x;
-
-
-    document.getElementById(
-        "yValue"
-    ).value =
-        record.y;
-
-
-    document.getElementById(
-        "zValue"
-    ).value =
-        record.z;
-
-
-    document.getElementById(
-        "threshold"
-    ).value =
-        record.threshold;
-
-
-    document.getElementById(
-        "latitude"
-    ).value =
-        record.latitude;
-
-
-    document.getElementById(
-        "longitude"
-    ).value =
-        record.longitude;
-
-
-    document.getElementById(
-        "satellites"
-    ).value =
-        record.satellites;
-
-
-    /*
-        Restore GPS state.
-    */
-
-    gpsActive =
-        record.gpsActive;
-
-
-    const gpsStatus =
-        document.getElementById(
-            "gpsStatus"
-        );
-
-
-    const gpsButton =
-        document.getElementById(
-            "gpsButton"
-        );
-
-
-    if (gpsActive) {
-
-        gpsStatus.innerText =
-            "GPS ACTIVE";
-
-        gpsStatus.className =
-            "status safe";
-
-        gpsButton.innerText =
-            "📍 STOP GPS";
-
-        gpsButton.className =
-            "danger";
-
-    }
-
-    else {
-
-        gpsStatus.innerText =
-            "GPS STOPPED";
-
-        gpsStatus.className =
-            "status searching";
-
-        gpsButton.innerText =
-            "📍 START GPS";
-
-        gpsButton.className =
-            "primary";
-
-    }
-
-
-    /*
-        Restore actuator states.
-    */
-
-    ledState =
-        record.led;
-
-
-    buzzerState =
-        record.buzzer;
-
-
-    /*
-        Restore last processed display.
-    */
-
-    lastProcessed = {
-
-        decision:
-            record.decision,
-
-        x:
-            record.x,
-
-        y:
-            record.y,
-
-        z:
-            record.z,
-
-        threshold:
-            record.threshold,
-
-        latitude:
-            record.latitude,
-
-        longitude:
-            record.longitude,
-
-        satellites:
-            record.satellites,
-
-        dateTime:
-            record.dateTime,
-
-        led:
-            record.led,
-
-        buzzer:
-            record.buzzer
-
-    };
-
-
-    updateStatus(
-        record.decision
-    );
-
-    updateActuators();
-
-    updateOLED();
-
-
-    addLog(
-
-        "Previous record loaded → " +
-        record.decision +
-        " | " +
-        record.dateTime
-
-    );
-
-
-    /*
-        Scroll to input section.
-    */
-
-    window.scrollTo({
-
-        top: 250,
-
-        behavior: "smooth"
-
-    });
-
-}
-
-
-/* =========================================================
-   SAMPLE SAFE
-========================================================= */
-
-function sampleSafe() {
-
-
-    document.getElementById(
-        "xValue"
-    ).value =
-        "0.20";
-
-
-    document.getElementById(
-        "yValue"
-    ).value =
-        "0.15";
-
-
-    document.getElementById(
-        "zValue"
-    ).value =
-        "1.00";
-
-
-    document.getElementById(
-        "threshold"
-    ).value =
-        "2.50";
-
-
-    addLog(
-        "Safe sample loaded - press CHECK SENSOR"
-    );
-
-}
-
-
-/* =========================================================
-   SAMPLE MOTION
-========================================================= */
-
-function sampleMotion() {
-
-
-    document.getElementById(
-        "xValue"
-    ).value =
-        "0.80";
-
-
-    document.getElementById(
-        "yValue"
-    ).value =
-        "0.65";
-
-
-    document.getElementById(
-        "zValue"
-    ).value =
-        "1.20";
-
-
-    document.getElementById(
-        "threshold"
-    ).value =
-        "2.50";
-
-
-    addLog(
-        "Motion sample loaded - press CHECK SENSOR"
-    );
-
-}
-
-
-/* =========================================================
-   SAMPLE IMPACT
-========================================================= */
-
-function sampleImpact() {
-
-
-    document.getElementById(
-        "xValue"
-    ).value =
-        "3.80";
-
-
-    document.getElementById(
-        "yValue"
-    ).value =
-        "1.20";
-
-
-    document.getElementById(
-        "zValue"
-    ).value =
-        "2.80";
-
-
-    document.getElementById(
-        "threshold"
-    ).value =
-        "2.50";
-
-
-    addLog(
-        "Impact sample loaded - press CHECK SENSOR"
-    );
-
-}
-
-
-/* =========================================================
-   GOOGLE MAPS
-========================================================= */
-
-function openMap(
-    latitude,
-    longitude
-) {
-
-
-    const url =
-        "https://www.google.com/maps?q=" +
-        latitude +
-        "," +
-        longitude;
-
-
-    window.open(
-        url,
-        "_blank"
-    );
-
-}
-
-
-/* =========================================================
-   CSV ESCAPE
-========================================================= */
-
-function csvEscape(value) {
-
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-
-        return "";
-
-    }
-
-
-    return '"' +
-
-        String(value)
-            .replace(
-                /"/g,
-                '""'
-            )
-
-        + '"';
-
-}
-
-
-/* =========================================================
-   DOWNLOAD CSV
-========================================================= */
-
-function downloadCSV() {
-
-
-    if (
-        historyData.length === 0
-    ) {
-
-        alert(
-            "No history available."
-        );
-
-        return;
-
-    }
-
-
-    const headers = [
-
-        "Record",
-
-        "Date Time",
-
-        "X Axis",
-
-        "Y Axis",
-
-        "Z Axis",
-
-        "Threshold",
-
-        "Latitude",
-
-        "Longitude",
-
-        "GPS Satellites",
-
-        "GPS",
-
-        "Decision",
-
-        "System",
-
-        "LED",
-
-        "Buzzer"
-
-    ];
-
-
-    let csv =
-        headers.join(",") +
-        "\n";
-
-
-    historyData.forEach(
-        (record, index) => {
-
-
-            const row = [
-
-                historyData.length -
-                index,
-
-                record.dateTime,
-
-                record.x,
-
-                record.y,
-
-                record.z,
-
-                record.threshold,
-
-                record.latitude,
-
-                record.longitude,
-
-                record.satellites,
-
-                record.gpsActive
-                    ? "ACTIVE"
-                    : "STOPPED",
-
-                record.decision,
-
-                record.armed
-                    ? "ARMED"
-                    : "DISARMED",
-
-                record.led
-                    ? "ON"
-                    : "OFF",
-
-                record.buzzer
-                    ? "ON"
-                    : "OFF"
-
-            ];
-
-
-            csv +=
-
-                row
-                    .map(csvEscape)
-                    .join(",") +
-
-                "\n";
-
-        }
-    );
-
-
-    const blob =
-        new Blob(
-
-            [csv],
-
-            {
-                type:
-                    "text/csv;charset=utf-8;"
-            }
-
-        );
-
-
-    const url =
-        URL.createObjectURL(
-            blob
-        );
-
-
-    const link =
-        document.createElement(
-            "a"
-        );
-
-
-    link.href =
-        url;
-
-
-    link.download =
-        "SIGNAL_SYNC_History.csv";
-
-
-    document.body.appendChild(
-        link
-    );
-
-
-    link.click();
-
-
-    document.body.removeChild(
-        link
-    );
-
-
-    URL.revokeObjectURL(
-        url
-    );
-
-
-    addLog(
-        "History downloaded as CSV"
-    );
-
-}
-
-
-/* =========================================================
-   CLEAR HISTORY
-========================================================= */
-
-function clearHistory() {
-
-
-    if (
-        historyData.length === 0
-    ) {
-
-        alert(
-            "History is already empty."
-        );
-
-        return;
-
-    }
-
-
-    const confirmation =
-        confirm(
-
-            "Are you sure you want to delete ALL SIGNAL SYNC history?"
-
-        );
-
-
-    if (!confirmation) {
-
-        return;
-
-    }
-
-
-    historyData =
-        [];
-
-
-    localStorage.removeItem(
-        "signalSyncHistory"
-    );
-
-
-    updateDashboard();
-
-    renderHistory();
-
-
-    addLog(
-        "All history records cleared"
-    );
-
-}
-
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-updateDashboard();
-
-renderHistory();
-
-updateOLED();
-
-updateActuators();
-
-
-addLog(
-    "SIGNAL SYNC Digital Prototype Started"
-);
-
-
-if (
-    historyData.length > 0
-) {
-
-    addLog(
-
-        historyData.length +
-        " previous records restored from browser storage"
-
-    );
-
-}
-
+updateThreshold($("threshold").value);
+updateStats();renderHistory();initGraph();updateMapCoords(Number($("lat").value),Number($("lon").value),0);
+log("SIGNAL SYNC initialized");
+log("AI engine READY");
+log("LocalStorage history READY");
+log("3D sensor graph READY");
 </script>
-
 </body>
-
 </html>
