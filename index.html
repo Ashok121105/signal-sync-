@@ -1,0 +1,3601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SIGNAL SYNC - Digital Prototype</title>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+
+    min-height: 100vh;
+
+    color: #e6f7ff;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(0, 200, 255, 0.14),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 90% 90%,
+            rgba(0, 255, 170, 0.08),
+            transparent 25%
+        ),
+        linear-gradient(
+            135deg,
+            #020617,
+            #061525 45%,
+            #020b14
+        );
+
+    background-attachment: fixed;
+}
+
+
+/* TECH GRID */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(0, 180, 255, 0.035) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(0, 180, 255, 0.035) 1px,
+            transparent 1px
+        );
+
+    background-size: 40px 40px;
+
+    pointer-events: none;
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #020617,
+            #06233a,
+            #03111f
+        );
+
+    border-bottom:
+        1px solid rgba(34, 211, 238, 0.3);
+
+    padding: 25px;
+
+    text-align: center;
+
+    box-shadow:
+        0 5px 35px rgba(0, 180, 255, 0.12);
+}
+
+header h1 {
+
+    font-size: 34px;
+
+    letter-spacing: 3px;
+
+    color: #67e8f9;
+
+    text-shadow:
+        0 0 15px rgba(34, 211, 238, 0.6);
+}
+
+header p {
+
+    margin-top: 8px;
+
+    color: #94a3b8;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.container {
+
+    width: 95%;
+
+    max-width: 1450px;
+
+    margin: 25px auto;
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 20px;
+}
+
+.card {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10, 30, 48, 0.94),
+            rgba(3, 15, 28, 0.96)
+        );
+
+    border:
+        1px solid rgba(56, 189, 248, 0.16);
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.35);
+
+    transition: 0.25s;
+}
+
+.card:hover {
+
+    transform: translateY(-3px);
+
+    border-color:
+        rgba(56, 189, 248, 0.45);
+
+    box-shadow:
+        0 10px 35px
+        rgba(0, 180, 255, 0.12);
+}
+
+.card h3 {
+
+    color: #7dd3fc;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+}
+
+.card strong {
+
+    display: block;
+
+    font-size: 32px;
+
+    margin-top: 8px;
+
+    color: #f0f9ff;
+}
+
+
+/* =========================================================
+   STATUS BAR
+========================================================= */
+
+.status-box {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10, 30, 48, 0.94),
+            rgba(3, 15, 28, 0.96)
+        );
+
+    border:
+        1px solid rgba(56, 189, 248, 0.16);
+
+    padding: 20px;
+
+    border-radius: 14px;
+
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,0.3);
+}
+
+.status-row {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+}
+
+.status {
+
+    padding: 10px 18px;
+
+    border-radius: 30px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.5px;
+}
+
+.safe {
+
+    background:
+        rgba(16,185,129,0.12);
+
+    color: #34d399;
+
+    border:
+        1px solid rgba(52,211,153,0.35);
+}
+
+.motion {
+
+    background:
+        rgba(245,158,11,0.12);
+
+    color: #fbbf24;
+
+    border:
+        1px solid rgba(245,158,11,0.35);
+}
+
+.impact {
+
+    background:
+        rgba(239,68,68,0.12);
+
+    color: #f87171;
+
+    border:
+        1px solid rgba(239,68,68,0.4);
+}
+
+.searching {
+
+    background:
+        rgba(59,130,246,0.12);
+
+    color: #60a5fa;
+
+    border:
+        1px solid rgba(59,130,246,0.35);
+}
+
+.pending {
+
+    background:
+        rgba(100,116,139,0.15);
+
+    color: #cbd5e1;
+
+    border:
+        1px solid rgba(148,163,184,0.25);
+}
+
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.main-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 20px;
+}
+
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.section {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10, 30, 48, 0.94),
+            rgba(3, 15, 28, 0.96)
+        );
+
+    border:
+        1px solid rgba(56,189,248,0.16);
+
+    padding: 22px;
+
+    border-radius: 14px;
+
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,0.3);
+}
+
+.section h2 {
+
+    margin-bottom: 18px;
+
+    color: #bae6fd;
+
+    border-bottom:
+        1px solid rgba(56,189,248,0.15);
+
+    padding-bottom: 12px;
+}
+
+
+/* =========================================================
+   SENSOR INPUT
+========================================================= */
+
+.input-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+}
+
+.input-box {
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+.input-box label {
+
+    color: #cbd5e1;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+}
+
+.input-box input {
+
+    padding: 12px;
+
+    background: #020b14;
+
+    color: #e0f2fe;
+
+    border:
+        1px solid #164e63;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+}
+
+.input-box input:focus {
+
+    outline: none;
+
+    border-color: #22d3ee;
+
+    box-shadow:
+        0 0 12px rgba(34,211,238,0.15);
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button {
+
+    border: none;
+
+    padding: 11px 17px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 700;
+
+    margin: 5px;
+
+    transition: 0.2s;
+}
+
+button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,0.3);
+}
+
+.primary {
+
+    background: #0284c7;
+
+    color: white;
+}
+
+.success {
+
+    background: #059669;
+
+    color: white;
+}
+
+.danger {
+
+    background: #dc2626;
+
+    color: white;
+}
+
+.warning {
+
+    background: #d97706;
+
+    color: white;
+}
+
+.dark {
+
+    background: #1e293b;
+
+    color: white;
+}
+
+.gray {
+
+    background: #475569;
+
+    color: white;
+}
+
+
+/* =========================================================
+   OLED
+========================================================= */
+
+.oled {
+
+    background:
+        radial-gradient(
+            circle at center,
+            #06331b,
+            #02130a 70%
+        );
+
+    color: #39ff88;
+
+    border:
+        7px solid #17202a;
+
+    border-radius: 10px;
+
+    padding: 22px;
+
+    min-height: 250px;
+
+    font-family: monospace;
+
+    box-shadow:
+        0 0 25px rgba(0,255,120,0.08),
+        inset 0 0 30px rgba(0,255,120,0.08);
+}
+
+.oled-line {
+
+    margin: 11px 0;
+
+    font-size: 15px;
+
+    font-family: monospace;
+
+    text-shadow:
+        0 0 7px rgba(57,255,136,0.4);
+}
+
+.oled-title {
+
+    font-weight: bold;
+
+    font-size: 18px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   ACTUATORS
+========================================================= */
+
+.actuator {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap: 15px;
+}
+
+.actuator-box {
+
+    background:
+        rgba(5,25,40,0.7);
+
+    border:
+        1px solid rgba(56,189,248,0.12);
+
+    border-radius: 10px;
+
+    padding: 18px;
+
+    text-align: center;
+}
+
+.actuator-box h3 {
+
+    color: #bae6fd;
+}
+
+.indicator {
+
+    width: 28px;
+
+    height: 28px;
+
+    border-radius: 50%;
+
+    background: #475569;
+
+    margin: 12px auto;
+
+    transition: 0.2s;
+}
+
+.indicator.on {
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 18px #22c55e;
+}
+
+.indicator.buzzer-on {
+
+    background: #ef4444;
+
+    box-shadow:
+        0 0 18px #ef4444;
+}
+
+
+/* =========================================================
+   EVENT LOG
+========================================================= */
+
+.log {
+
+    max-height: 260px;
+
+    overflow-y: auto;
+
+    background: #020811;
+
+    color: #67e8f9;
+
+    padding: 15px;
+
+    border-radius: 8px;
+
+    border:
+        1px solid rgba(34,211,238,0.12);
+
+    font-family: monospace;
+
+    font-size: 13px;
+}
+
+.log div {
+
+    margin-bottom: 9px;
+
+    padding-bottom: 7px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.04);
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-controls {
+
+    display: flex;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 15px;
+}
+
+.history-controls input {
+
+    flex: 1;
+
+    min-width: 250px;
+
+    padding: 12px;
+
+    background: #020b14;
+
+    color: #e0f2fe;
+
+    border:
+        1px solid #164e63;
+
+    border-radius: 8px;
+}
+
+.history-controls input::placeholder {
+
+    color: #64748b;
+}
+
+.history-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.history-item {
+
+    border:
+        1px solid rgba(56,189,248,0.15);
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    background:
+        rgba(2,15,28,0.7);
+}
+
+.history-header {
+
+    padding: 16px;
+
+    background:
+        rgba(8,30,48,0.8);
+
+    cursor: pointer;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.history-header:hover {
+
+    background:
+        rgba(14,50,75,0.9);
+}
+
+.history-title {
+
+    font-weight: bold;
+
+    color: #e0f2fe;
+}
+
+.history-time {
+
+    font-size: 13px;
+
+    color: #64748b;
+
+    margin-top: 5px;
+}
+
+.history-details {
+
+    display: none;
+
+    padding: 18px;
+
+    background: #020b14;
+
+    border-top:
+        1px solid rgba(56,189,248,0.15);
+}
+
+.history-details.open {
+
+    display: block;
+}
+
+.detail-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 10px;
+}
+
+.detail {
+
+    background:
+        rgba(15,40,58,0.6);
+
+    padding: 11px;
+
+    border-radius: 7px;
+}
+
+.detail span {
+
+    display: block;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+.detail strong {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: #dbeafe;
+}
+
+.history-actions {
+
+    margin-top: 15px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   EMPTY HISTORY
+========================================================= */
+
+.empty-history {
+
+    padding: 30px;
+
+    text-align: center;
+
+    color: #64748b;
+
+    border:
+        1px dashed rgba(56,189,248,0.2);
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 900px) {
+
+    .dashboard {
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .main-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+}
+
+@media(max-width: 600px) {
+
+    .dashboard {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .input-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .detail-grid {
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    header h1 {
+
+        font-size: 25px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+======================================================= -->
+
+<header>
+
+    <h1>🚨 SIGNAL SYNC</h1>
+
+    <p>
+        Embedded Motion, Impact & GPS Monitoring System
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- ======================================================
+     DASHBOARD
+======================================================= -->
+
+<div class="dashboard">
+
+    <div class="card">
+
+        <h3>Total Records</h3>
+
+        <strong id="totalCount">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Safe Events</h3>
+
+        <strong id="safeCount">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Motion Events</h3>
+
+        <strong id="motionCount">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="card">
+
+        <h3>Impact Events</h3>
+
+        <strong id="impactCount">
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     SYSTEM STATUS
+======================================================= -->
+
+<div class="status-box">
+
+    <div class="status-row">
+
+        <span
+            id="systemStatus"
+            class="status pending">
+
+            NOT PROCESSED
+
+        </span>
+
+
+        <span
+            id="armStatus"
+            class="status safe">
+
+            ARMED
+
+        </span>
+
+
+        <span
+            id="gpsStatus"
+            class="status searching">
+
+            GPS STOPPED
+
+        </span>
+
+    </div>
+
+
+    <div style="margin-top:15px;">
+
+        <strong>
+            Current Time:
+        </strong>
+
+        <span id="currentTime">
+            --
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================================
+     MAIN GRID
+======================================================= -->
+
+<div class="main-grid">
+
+
+<!-- ======================================================
+     LEFT COLUMN
+======================================================= -->
+
+<div>
+
+
+<!-- SENSOR INPUT -->
+
+<div class="section">
+
+<h2>
+    📡 Sensor Input
+</h2>
+
+
+<div class="input-grid">
+
+
+<div class="input-box">
+
+<label>
+    X Axis
+</label>
+
+<input
+    type="number"
+    id="xValue"
+    step="0.01"
+    value="0.20"
+>
+
+</div>
+
+
+<div class="input-box">
+
+<label>
+    Y Axis
+</label>
+
+<input
+    type="number"
+    id="yValue"
+    step="0.01"
+    value="0.15"
+>
+
+</div>
+
+
+<div class="input-box">
+
+<label>
+    Z Axis
+</label>
+
+<input
+    type="number"
+    id="zValue"
+    step="0.01"
+    value="1.00"
+>
+
+</div>
+
+
+<div class="input-box">
+
+<label>
+    Impact Threshold
+</label>
+
+<input
+    type="number"
+    id="threshold"
+    step="0.01"
+    value="2.50"
+>
+
+</div>
+
+
+<div class="input-box">
+
+<label>
+    Latitude
+</label>
+
+<input
+    type="number"
+    id="latitude"
+    step="0.000001"
+    value="16.306700"
+>
+
+</div>
+
+
+<div class="input-box">
+
+<label>
+    Longitude
+</label>
+
+<input
+    type="number"
+    id="longitude"
+    step="0.000001"
+    value="80.436500"
+>
+
+</div>
+
+
+<div class="input-box">
+
+<label>
+    GPS Satellites
+</label>
+
+<input
+    type="number"
+    id="satellites"
+    value="8"
+>
+
+</div>
+
+
+</div>
+
+
+<div style="margin-top:15px;">
+
+<button
+    class="primary"
+    onclick="processSensor()">
+
+    🔍 CHECK SENSOR
+
+</button>
+
+
+<button
+    class="gray"
+    onclick="sampleSafe()">
+
+    SAFE SAMPLE
+
+</button>
+
+
+<button
+    class="warning"
+    onclick="sampleMotion()">
+
+    MOTION SAMPLE
+
+</button>
+
+
+<button
+    class="danger"
+    onclick="sampleImpact()">
+
+    IMPACT SAMPLE
+
+</button>
+
+</div>
+
+
+<p
+    style="
+        color:#64748b;
+        font-size:13px;
+        margin-top:10px;
+    ">
+
+    Enter values manually and press
+    <b>CHECK SENSOR</b> to process and save a new record.
+
+</p>
+
+</div>
+
+
+<!-- SYSTEM CONTROL -->
+
+<div class="section">
+
+<h2>
+    🎛️ System Control
+</h2>
+
+
+<button
+    id="armButton"
+    class="success"
+    onclick="toggleArm()">
+
+    🔒 DISARM
+
+</button>
+
+
+<button
+    id="gpsButton"
+    class="primary"
+    onclick="toggleGPS()">
+
+    📍 START GPS
+
+</button>
+
+
+<button
+    class="success"
+    onclick="manualLED(true)">
+
+    💡 LED ON
+
+</button>
+
+
+<button
+    class="gray"
+    onclick="manualLED(false)">
+
+    💡 LED OFF
+
+</button>
+
+
+<button
+    class="danger"
+    onclick="manualBuzzer(true)">
+
+    🔊 BUZZER ON
+
+</button>
+
+
+<button
+    class="gray"
+    onclick="manualBuzzer(false)">
+
+    🔊 BUZZER OFF
+
+</button>
+
+</div>
+
+
+<!-- ACTUATORS -->
+
+<div class="section">
+
+<h2>
+    ⚡ Output / Actuators
+</h2>
+
+
+<div class="actuator">
+
+
+<div class="actuator-box">
+
+<h3>
+    💡 LED
+</h3>
+
+<div
+    id="ledIndicator"
+    class="indicator">
+</div>
+
+<strong id="ledText">
+    OFF
+</strong>
+
+</div>
+
+
+<div class="actuator-box">
+
+<h3>
+    🔊 Buzzer
+</h3>
+
+<div
+    id="buzzerIndicator"
+    class="indicator">
+</div>
+
+<strong id="buzzerText">
+    OFF
+</strong>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- ======================================================
+     RIGHT COLUMN
+======================================================= -->
+
+<div>
+
+
+<!-- OLED -->
+
+<div class="section">
+
+<h2>
+    📟 Virtual OLED Display
+</h2>
+
+
+<div class="oled">
+
+
+<div class="oled-line oled-title">
+    SIGNAL SYNC
+</div>
+
+
+<div class="oled-line">
+
+    STATUS:
+    <span id="oledStatus">
+        NOT PROCESSED
+    </span>
+
+</div>
+
+
+<div class="oled-line">
+
+    X:
+    <span id="oledX">
+        0.20
+    </span>
+
+</div>
+
+
+<div class="oled-line">
+
+    Y:
+    <span id="oledY">
+        0.15
+    </span>
+
+</div>
+
+
+<div class="oled-line">
+
+    Z:
+    <span id="oledZ">
+        1.00
+    </span>
+
+</div>
+
+
+<div class="oled-line">
+
+    GPS:
+    <span id="oledGPS">
+        STOPPED
+    </span>
+
+</div>
+
+
+<div class="oled-line">
+
+    LED:
+    <span id="oledLED">
+        OFF
+    </span>
+
+</div>
+
+
+<div class="oled-line">
+
+    BUZZER:
+    <span id="oledBuzzer">
+        OFF
+    </span>
+
+</div>
+
+
+<div class="oled-line">
+
+    LAST:
+    <span id="oledLastTime">
+        --
+    </span>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- LIVE LOG -->
+
+<div class="section">
+
+<h2>
+    📝 Live Event Log
+</h2>
+
+
+<div
+    id="eventLog"
+    class="log">
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- ======================================================
+     HISTORY
+======================================================= -->
+
+<div class="section">
+
+<h2>
+    🗂️ Test History
+</h2>
+
+
+<div class="history-controls">
+
+
+<input
+    type="text"
+    id="searchHistory"
+    placeholder="🔎 Search date, time, SAFE, MOTION, IMPACT, GPS, values..."
+    oninput="renderHistory()"
+>
+
+
+<button
+    class="primary"
+    onclick="downloadCSV()">
+
+    ⬇️ DOWNLOAD CSV
+
+</button>
+
+
+<button
+    class="danger"
+    onclick="clearHistory()">
+
+    🗑️ CLEAR HISTORY
+
+</button>
+
+
+</div>
+
+
+<div
+    id="historyList"
+    class="history-list">
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let systemArmed = true;
+
+let gpsActive = false;
+
+let ledState = false;
+
+let buzzerState = false;
+
+
+/*
+    Last processed result.
+
+    This is important:
+    Changing input values will NOT change
+    OLED/status until CHECK SENSOR is pressed.
+*/
+
+let lastProcessed = {
+
+    decision: "NOT PROCESSED",
+
+    x: 0.20,
+
+    y: 0.15,
+
+    z: 1.00,
+
+    threshold: 2.50,
+
+    latitude: 16.306700,
+
+    longitude: 80.436500,
+
+    satellites: 8,
+
+    dateTime: "--",
+
+    led: false,
+
+    buzzer: false
+
+};
+
+
+/* =========================================================
+   LOAD HISTORY FROM BROWSER
+========================================================= */
+
+let historyData =
+    JSON.parse(
+        localStorage.getItem(
+            "signalSyncHistory"
+        )
+    ) || [];
+
+
+/* =========================================================
+   CLOCK
+========================================================= */
+
+function updateClock() {
+
+    const now = new Date();
+
+    document.getElementById(
+        "currentTime"
+    ).innerText =
+        now.toLocaleString();
+
+}
+
+setInterval(updateClock, 1000);
+
+updateClock();
+
+
+/* =========================================================
+   SAVE HISTORY
+========================================================= */
+
+function saveHistory() {
+
+    localStorage.setItem(
+
+        "signalSyncHistory",
+
+        JSON.stringify(historyData)
+
+    );
+
+}
+
+
+/* =========================================================
+   EVENT LOG
+========================================================= */
+
+function addLog(message) {
+
+    const log =
+        document.getElementById(
+            "eventLog"
+        );
+
+
+    const time =
+        new Date().toLocaleTimeString();
+
+
+    const entry =
+        document.createElement("div");
+
+
+    entry.innerText =
+        "[" +
+        time +
+        "] " +
+        message;
+
+
+    log.prepend(entry);
+
+}
+
+
+/* =========================================================
+   ARM / DISARM
+========================================================= */
+
+function toggleArm() {
+
+    systemArmed =
+        !systemArmed;
+
+
+    const button =
+        document.getElementById(
+            "armButton"
+        );
+
+
+    const status =
+        document.getElementById(
+            "armStatus"
+        );
+
+
+    if (systemArmed) {
+
+        button.innerText =
+            "🔒 DISARM";
+
+        button.className =
+            "success";
+
+        status.innerText =
+            "ARMED";
+
+        status.className =
+            "status safe";
+
+
+        addLog(
+            "System ARMED"
+        );
+
+    }
+
+    else {
+
+        button.innerText =
+            "🔓 ARM";
+
+        button.className =
+            "danger";
+
+        status.innerText =
+            "DISARMED";
+
+        status.className =
+            "status impact";
+
+
+        addLog(
+            "System DISARMED"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   GPS
+========================================================= */
+
+function toggleGPS() {
+
+    gpsActive =
+        !gpsActive;
+
+
+    const status =
+        document.getElementById(
+            "gpsStatus"
+        );
+
+
+    const button =
+        document.getElementById(
+            "gpsButton"
+        );
+
+
+    if (gpsActive) {
+
+        status.innerText =
+            "GPS ACTIVE";
+
+        status.className =
+            "status safe";
+
+        button.innerText =
+            "📍 STOP GPS";
+
+        button.className =
+            "danger";
+
+
+        addLog(
+            "GPS tracking STARTED"
+        );
+
+    }
+
+    else {
+
+        status.innerText =
+            "GPS STOPPED";
+
+        status.className =
+            "status searching";
+
+        button.innerText =
+            "📍 START GPS";
+
+        button.className =
+            "primary";
+
+
+        addLog(
+            "GPS tracking STOPPED"
+        );
+
+    }
+
+
+    updateOLED();
+
+}
+
+
+/* =========================================================
+   MANUAL LED
+========================================================= */
+
+function manualLED(state) {
+
+    ledState =
+        state;
+
+
+    updateActuators();
+
+
+    addLog(
+
+        "LED manually turned " +
+        (state ? "ON" : "OFF")
+
+    );
+
+}
+
+
+/* =========================================================
+   MANUAL BUZZER
+========================================================= */
+
+function manualBuzzer(state) {
+
+    buzzerState =
+        state;
+
+
+    updateActuators();
+
+
+    addLog(
+
+        "Buzzer manually turned " +
+        (state ? "ON" : "OFF")
+
+    );
+
+}
+
+
+/* =========================================================
+   PROCESS SENSOR
+========================================================= */
+
+function processSensor() {
+
+
+    const x =
+        parseFloat(
+            document.getElementById(
+                "xValue"
+            ).value
+        );
+
+
+    const y =
+        parseFloat(
+            document.getElementById(
+                "yValue"
+            ).value
+        );
+
+
+    const z =
+        parseFloat(
+            document.getElementById(
+                "zValue"
+            ).value
+        );
+
+
+    const threshold =
+        parseFloat(
+            document.getElementById(
+                "threshold"
+            ).value
+        );
+
+
+    const latitude =
+        parseFloat(
+            document.getElementById(
+                "latitude"
+            ).value
+        );
+
+
+    const longitude =
+        parseFloat(
+            document.getElementById(
+                "longitude"
+            ).value
+        );
+
+
+    const satellites =
+        parseInt(
+            document.getElementById(
+                "satellites"
+            ).value
+        );
+
+
+    /* VALIDATION */
+
+    if (
+
+        isNaN(x) ||
+        isNaN(y) ||
+        isNaN(z) ||
+        isNaN(threshold) ||
+        isNaN(latitude) ||
+        isNaN(longitude) ||
+        isNaN(satellites)
+
+    ) {
+
+        alert(
+            "Please enter valid values in all fields."
+        );
+
+        return;
+
+    }
+
+
+    if (threshold <= 0) {
+
+        alert(
+            "Impact threshold must be greater than 0."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================================
+       DECISION LOGIC
+    ===================================================== */
+
+
+    const maxAxis =
+        Math.max(
+
+            Math.abs(x),
+
+            Math.abs(y),
+
+            Math.abs(z)
+
+        );
+
+
+    let decision;
+
+
+    /*
+        IMPACT
+
+        If any axis reaches threshold.
+    */
+
+    if (
+        maxAxis >= threshold
+    ) {
+
+        decision =
+            "IMPACT";
+
+    }
+
+
+    /*
+        MOTION
+
+        If movement exists but
+        threshold was not reached.
+    */
+
+    else if (
+
+        Math.abs(x) > 0.50 ||
+
+        Math.abs(y) > 0.50 ||
+
+        Math.abs(z - 1.00) > 0.50
+
+    ) {
+
+        decision =
+            "MOTION";
+
+    }
+
+
+    /*
+        SAFE
+    */
+
+    else {
+
+        decision =
+            "SAFE";
+
+    }
+
+
+    /* =====================================================
+       AUTOMATIC CONTROL
+    ===================================================== */
+
+
+    if (systemArmed) {
+
+
+        if (decision === "IMPACT") {
+
+            ledState =
+                true;
+
+            buzzerState =
+                true;
+
+        }
+
+
+        else if (decision === "MOTION") {
+
+            ledState =
+                true;
+
+            buzzerState =
+                false;
+
+        }
+
+
+        else {
+
+            ledState =
+                false;
+
+            buzzerState =
+                false;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       TIME
+    ===================================================== */
+
+    const now =
+        new Date();
+
+
+    const dateTime =
+        now.toLocaleString();
+
+
+    /* =====================================================
+       CREATE RECORD
+    ===================================================== */
+
+    const record = {
+
+        id:
+            Date.now(),
+
+        dateTime:
+            dateTime,
+
+        timestamp:
+            Date.now(),
+
+        x:
+            x,
+
+        y:
+            y,
+
+        z:
+            z,
+
+        threshold:
+            threshold,
+
+        latitude:
+            latitude,
+
+        longitude:
+            longitude,
+
+        satellites:
+            satellites,
+
+        gpsActive:
+            gpsActive,
+
+        decision:
+            decision,
+
+        armed:
+            systemArmed,
+
+        led:
+            ledState,
+
+        buzzer:
+            buzzerState
+
+    };
+
+
+    /* SAVE NEW RECORD */
+
+    historyData.unshift(
+        record
+    );
+
+
+    saveHistory();
+
+
+    /* UPDATE LAST PROCESSED */
+
+    lastProcessed = {
+
+        decision:
+            decision,
+
+        x:
+            x,
+
+        y:
+            y,
+
+        z:
+            z,
+
+        threshold:
+            threshold,
+
+        latitude:
+            latitude,
+
+        longitude:
+            longitude,
+
+        satellites:
+            satellites,
+
+        dateTime:
+            dateTime,
+
+        led:
+            ledState,
+
+        buzzer:
+            buzzerState
+
+    };
+
+
+    /* UPDATE UI */
+
+    updateDashboard();
+
+    renderHistory();
+
+    updateStatus(
+        decision
+    );
+
+    updateActuators();
+
+    updateOLED();
+
+
+    addLog(
+
+        "Sensor processed → " +
+        decision +
+        " | X:" +
+        x +
+        " Y:" +
+        y +
+        " Z:" +
+        z
+
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE STATUS
+========================================================= */
+
+function updateStatus(decision) {
+
+    const status =
+        document.getElementById(
+            "systemStatus"
+        );
+
+
+    status.innerText =
+        "SYSTEM " +
+        decision;
+
+
+    if (decision === "SAFE") {
+
+        status.className =
+            "status safe";
+
+    }
+
+    else if (
+        decision === "MOTION"
+    ) {
+
+        status.className =
+            "status motion";
+
+    }
+
+    else if (
+        decision === "IMPACT"
+    ) {
+
+        status.className =
+            "status impact";
+
+    }
+
+}
+
+
+/* =========================================================
+   UPDATE ACTUATORS
+========================================================= */
+
+function updateActuators() {
+
+
+    const led =
+        document.getElementById(
+            "ledIndicator"
+        );
+
+
+    const buzzer =
+        document.getElementById(
+            "buzzerIndicator"
+        );
+
+
+    const ledText =
+        document.getElementById(
+            "ledText"
+        );
+
+
+    const buzzerText =
+        document.getElementById(
+            "buzzerText"
+        );
+
+
+    if (ledState) {
+
+        led.classList.add(
+            "on"
+        );
+
+        ledText.innerText =
+            "ON";
+
+    }
+
+    else {
+
+        led.classList.remove(
+            "on"
+        );
+
+        ledText.innerText =
+            "OFF";
+
+    }
+
+
+    if (buzzerState) {
+
+        buzzer.classList.add(
+            "buzzer-on"
+        );
+
+        buzzerText.innerText =
+            "ON";
+
+    }
+
+    else {
+
+        buzzer.classList.remove(
+            "buzzer-on"
+        );
+
+        buzzerText.innerText =
+            "OFF";
+
+    }
+
+
+    updateOLED();
+
+}
+
+
+/* =========================================================
+   OLED
+========================================================= */
+
+function updateOLED() {
+
+
+    /*
+        IMPORTANT:
+
+        OLED uses LAST PROCESSED data,
+        not whatever the user is currently typing.
+    */
+
+
+    document.getElementById(
+        "oledStatus"
+    ).innerText =
+        lastProcessed.decision;
+
+
+    document.getElementById(
+        "oledX"
+    ).innerText =
+        lastProcessed.x;
+
+
+    document.getElementById(
+        "oledY"
+    ).innerText =
+        lastProcessed.y;
+
+
+    document.getElementById(
+        "oledZ"
+    ).innerText =
+        lastProcessed.z;
+
+
+    document.getElementById(
+        "oledGPS"
+    ).innerText =
+        gpsActive
+            ? "ACTIVE"
+            : "STOPPED";
+
+
+    document.getElementById(
+        "oledLED"
+    ).innerText =
+        ledState
+            ? "ON"
+            : "OFF";
+
+
+    document.getElementById(
+        "oledBuzzer"
+    ).innerText =
+        buzzerState
+            ? "ON"
+            : "OFF";
+
+
+    document.getElementById(
+        "oledLastTime"
+    ).innerText =
+        lastProcessed.dateTime;
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function updateDashboard() {
+
+
+    const total =
+        historyData.length;
+
+
+    const safe =
+        historyData.filter(
+            r =>
+                r.decision === "SAFE"
+        ).length;
+
+
+    const motion =
+        historyData.filter(
+            r =>
+                r.decision === "MOTION"
+        ).length;
+
+
+    const impact =
+        historyData.filter(
+            r =>
+                r.decision === "IMPACT"
+        ).length;
+
+
+    document.getElementById(
+        "totalCount"
+    ).innerText =
+        total;
+
+
+    document.getElementById(
+        "safeCount"
+    ).innerText =
+        safe;
+
+
+    document.getElementById(
+        "motionCount"
+    ).innerText =
+        motion;
+
+
+    document.getElementById(
+        "impactCount"
+    ).innerText =
+        impact;
+
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function renderHistory() {
+
+
+    const list =
+        document.getElementById(
+            "historyList"
+        );
+
+
+    const search =
+        document.getElementById(
+            "searchHistory"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    list.innerHTML =
+        "";
+
+
+    const filtered =
+        historyData.filter(
+            record => {
+
+                const text =
+                    JSON.stringify(
+                        record
+                    ).toLowerCase();
+
+
+                return text.includes(
+                    search
+                );
+
+            }
+        );
+
+
+    if (
+        filtered.length === 0
+    ) {
+
+        list.innerHTML = `
+
+            <div class="empty-history">
+
+                No history records found.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    filtered.forEach(
+        record => {
+
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "history-item";
+
+
+            let statusClass =
+                "safe";
+
+
+            if (
+                record.decision === "MOTION"
+            ) {
+
+                statusClass =
+                    "motion";
+
+            }
+
+
+            if (
+                record.decision === "IMPACT"
+            ) {
+
+                statusClass =
+                    "impact";
+
+            }
+
+
+            const originalIndex =
+                historyData.indexOf(
+                    record
+                );
+
+
+            const recordNumber =
+                historyData.length -
+                originalIndex;
+
+
+            item.innerHTML = `
+
+                <div
+                    class="history-header"
+                    onclick="toggleHistory('${record.id}')">
+
+                    <div>
+
+                        <div
+                            class="history-title">
+
+                            <span
+                                id="arrow-${record.id}">
+
+                                ▶
+
+                            </span>
+
+                            Record #${recordNumber}
+
+                            &nbsp; | &nbsp;
+
+                            <span
+                                class="status ${statusClass}"
+                                style="
+                                    padding:5px 10px;
+                                    font-size:12px;
+                                ">
+
+                                ${record.decision}
+
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="history-time">
+
+                            📅 ${record.dateTime}
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        📍
+                        ${Number(
+                            record.latitude
+                        ).toFixed(4)},
+
+                        ${Number(
+                            record.longitude
+                        ).toFixed(4)}
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="details-${record.id}"
+                    class="history-details">
+
+
+                    <div class="detail-grid">
+
+
+                        <div class="detail">
+
+                            <span>
+                                X Axis
+                            </span>
+
+                            <strong>
+                                ${record.x}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                Y Axis
+                            </span>
+
+                            <strong>
+                                ${record.y}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                Z Axis
+                            </span>
+
+                            <strong>
+                                ${record.z}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                Threshold
+                            </span>
+
+                            <strong>
+                                ${record.threshold}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                Latitude
+                            </span>
+
+                            <strong>
+                                ${record.latitude}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                Longitude
+                            </span>
+
+                            <strong>
+                                ${record.longitude}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                GPS Satellites
+                            </span>
+
+                            <strong>
+                                ${record.satellites}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                GPS
+                            </span>
+
+                            <strong>
+
+                                ${
+                                    record.gpsActive
+                                    ? "ACTIVE"
+                                    : "STOPPED"
+                                }
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                System
+                            </span>
+
+                            <strong>
+
+                                ${
+                                    record.armed
+                                    ? "ARMED"
+                                    : "DISARMED"
+                                }
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                LED
+                            </span>
+
+                            <strong>
+
+                                ${
+                                    record.led
+                                    ? "ON"
+                                    : "OFF"
+                                }
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                Buzzer
+                            </span>
+
+                            <strong>
+
+                                ${
+                                    record.buzzer
+                                    ? "ON"
+                                    : "OFF"
+                                }
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span>
+                                Decision
+                            </span>
+
+                            <strong>
+
+                                ${record.decision}
+
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div
+                        class="history-actions">
+
+
+                        <button
+                            class="primary"
+                            onclick="
+                                loadHistory('${record.id}')
+                            ">
+
+                            📥 LOAD DATA
+
+                        </button>
+
+
+                        <button
+                            class="gray"
+                            onclick="
+                                openMap(
+                                    ${record.latitude},
+                                    ${record.longitude}
+                                )
+                            ">
+
+                            🗺️ VIEW LOCATION
+
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   OPEN / CLOSE HISTORY
+========================================================= */
+
+function toggleHistory(id) {
+
+
+    const details =
+        document.getElementById(
+            "details-" + id
+        );
+
+
+    const arrow =
+        document.getElementById(
+            "arrow-" + id
+        );
+
+
+    if (
+        details.classList.contains(
+            "open"
+        )
+    ) {
+
+
+        /*
+            CLOSE
+        */
+
+        details.classList.remove(
+            "open"
+        );
+
+
+        arrow.innerText =
+            "▶";
+
+    }
+
+
+    else {
+
+
+        /*
+            CLOSE ALL OTHER RECORDS
+        */
+
+        document
+            .querySelectorAll(
+                ".history-details"
+            )
+            .forEach(
+                box => {
+
+                    box.classList.remove(
+                        "open"
+                    );
+
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                "[id^='arrow-']"
+            )
+            .forEach(
+                a => {
+
+                    a.innerText =
+                        "▶";
+
+                }
+            );
+
+
+        /*
+            OPEN SELECTED RECORD
+        */
+
+        details.classList.add(
+            "open"
+        );
+
+
+        arrow.innerText =
+            "▼";
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD OLD RECORD
+========================================================= */
+
+function loadHistory(id) {
+
+
+    const record =
+        historyData.find(
+            r =>
+                String(r.id) ===
+                String(id)
+        );
+
+
+    if (!record) {
+
+        return;
+
+    }
+
+
+    /*
+        Put old data into
+        current input fields.
+    */
+
+
+    document.getElementById(
+        "xValue"
+    ).value =
+        record.x;
+
+
+    document.getElementById(
+        "yValue"
+    ).value =
+        record.y;
+
+
+    document.getElementById(
+        "zValue"
+    ).value =
+        record.z;
+
+
+    document.getElementById(
+        "threshold"
+    ).value =
+        record.threshold;
+
+
+    document.getElementById(
+        "latitude"
+    ).value =
+        record.latitude;
+
+
+    document.getElementById(
+        "longitude"
+    ).value =
+        record.longitude;
+
+
+    document.getElementById(
+        "satellites"
+    ).value =
+        record.satellites;
+
+
+    /*
+        Restore GPS state.
+    */
+
+    gpsActive =
+        record.gpsActive;
+
+
+    const gpsStatus =
+        document.getElementById(
+            "gpsStatus"
+        );
+
+
+    const gpsButton =
+        document.getElementById(
+            "gpsButton"
+        );
+
+
+    if (gpsActive) {
+
+        gpsStatus.innerText =
+            "GPS ACTIVE";
+
+        gpsStatus.className =
+            "status safe";
+
+        gpsButton.innerText =
+            "📍 STOP GPS";
+
+        gpsButton.className =
+            "danger";
+
+    }
+
+    else {
+
+        gpsStatus.innerText =
+            "GPS STOPPED";
+
+        gpsStatus.className =
+            "status searching";
+
+        gpsButton.innerText =
+            "📍 START GPS";
+
+        gpsButton.className =
+            "primary";
+
+    }
+
+
+    /*
+        Restore actuator states.
+    */
+
+    ledState =
+        record.led;
+
+
+    buzzerState =
+        record.buzzer;
+
+
+    /*
+        Restore last processed display.
+    */
+
+    lastProcessed = {
+
+        decision:
+            record.decision,
+
+        x:
+            record.x,
+
+        y:
+            record.y,
+
+        z:
+            record.z,
+
+        threshold:
+            record.threshold,
+
+        latitude:
+            record.latitude,
+
+        longitude:
+            record.longitude,
+
+        satellites:
+            record.satellites,
+
+        dateTime:
+            record.dateTime,
+
+        led:
+            record.led,
+
+        buzzer:
+            record.buzzer
+
+    };
+
+
+    updateStatus(
+        record.decision
+    );
+
+    updateActuators();
+
+    updateOLED();
+
+
+    addLog(
+
+        "Previous record loaded → " +
+        record.decision +
+        " | " +
+        record.dateTime
+
+    );
+
+
+    /*
+        Scroll to input section.
+    */
+
+    window.scrollTo({
+
+        top: 250,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+
+/* =========================================================
+   SAMPLE SAFE
+========================================================= */
+
+function sampleSafe() {
+
+
+    document.getElementById(
+        "xValue"
+    ).value =
+        "0.20";
+
+
+    document.getElementById(
+        "yValue"
+    ).value =
+        "0.15";
+
+
+    document.getElementById(
+        "zValue"
+    ).value =
+        "1.00";
+
+
+    document.getElementById(
+        "threshold"
+    ).value =
+        "2.50";
+
+
+    addLog(
+        "Safe sample loaded - press CHECK SENSOR"
+    );
+
+}
+
+
+/* =========================================================
+   SAMPLE MOTION
+========================================================= */
+
+function sampleMotion() {
+
+
+    document.getElementById(
+        "xValue"
+    ).value =
+        "0.80";
+
+
+    document.getElementById(
+        "yValue"
+    ).value =
+        "0.65";
+
+
+    document.getElementById(
+        "zValue"
+    ).value =
+        "1.20";
+
+
+    document.getElementById(
+        "threshold"
+    ).value =
+        "2.50";
+
+
+    addLog(
+        "Motion sample loaded - press CHECK SENSOR"
+    );
+
+}
+
+
+/* =========================================================
+   SAMPLE IMPACT
+========================================================= */
+
+function sampleImpact() {
+
+
+    document.getElementById(
+        "xValue"
+    ).value =
+        "3.80";
+
+
+    document.getElementById(
+        "yValue"
+    ).value =
+        "1.20";
+
+
+    document.getElementById(
+        "zValue"
+    ).value =
+        "2.80";
+
+
+    document.getElementById(
+        "threshold"
+    ).value =
+        "2.50";
+
+
+    addLog(
+        "Impact sample loaded - press CHECK SENSOR"
+    );
+
+}
+
+
+/* =========================================================
+   GOOGLE MAPS
+========================================================= */
+
+function openMap(
+    latitude,
+    longitude
+) {
+
+
+    const url =
+        "https://www.google.com/maps?q=" +
+        latitude +
+        "," +
+        longitude;
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+
+
+/* =========================================================
+   CSV ESCAPE
+========================================================= */
+
+function csvEscape(value) {
+
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return '"' +
+
+        String(value)
+            .replace(
+                /"/g,
+                '""'
+            )
+
+        + '"';
+
+}
+
+
+/* =========================================================
+   DOWNLOAD CSV
+========================================================= */
+
+function downloadCSV() {
+
+
+    if (
+        historyData.length === 0
+    ) {
+
+        alert(
+            "No history available."
+        );
+
+        return;
+
+    }
+
+
+    const headers = [
+
+        "Record",
+
+        "Date Time",
+
+        "X Axis",
+
+        "Y Axis",
+
+        "Z Axis",
+
+        "Threshold",
+
+        "Latitude",
+
+        "Longitude",
+
+        "GPS Satellites",
+
+        "GPS",
+
+        "Decision",
+
+        "System",
+
+        "LED",
+
+        "Buzzer"
+
+    ];
+
+
+    let csv =
+        headers.join(",") +
+        "\n";
+
+
+    historyData.forEach(
+        (record, index) => {
+
+
+            const row = [
+
+                historyData.length -
+                index,
+
+                record.dateTime,
+
+                record.x,
+
+                record.y,
+
+                record.z,
+
+                record.threshold,
+
+                record.latitude,
+
+                record.longitude,
+
+                record.satellites,
+
+                record.gpsActive
+                    ? "ACTIVE"
+                    : "STOPPED",
+
+                record.decision,
+
+                record.armed
+                    ? "ARMED"
+                    : "DISARMED",
+
+                record.led
+                    ? "ON"
+                    : "OFF",
+
+                record.buzzer
+                    ? "ON"
+                    : "OFF"
+
+            ];
+
+
+            csv +=
+
+                row
+                    .map(csvEscape)
+                    .join(",") +
+
+                "\n";
+
+        }
+    );
+
+
+    const blob =
+        new Blob(
+
+            [csv],
+
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
+
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "SIGNAL_SYNC_History.csv";
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+
+    addLog(
+        "History downloaded as CSV"
+    );
+
+}
+
+
+/* =========================================================
+   CLEAR HISTORY
+========================================================= */
+
+function clearHistory() {
+
+
+    if (
+        historyData.length === 0
+    ) {
+
+        alert(
+            "History is already empty."
+        );
+
+        return;
+
+    }
+
+
+    const confirmation =
+        confirm(
+
+            "Are you sure you want to delete ALL SIGNAL SYNC history?"
+
+        );
+
+
+    if (!confirmation) {
+
+        return;
+
+    }
+
+
+    historyData =
+        [];
+
+
+    localStorage.removeItem(
+        "signalSyncHistory"
+    );
+
+
+    updateDashboard();
+
+    renderHistory();
+
+
+    addLog(
+        "All history records cleared"
+    );
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+updateDashboard();
+
+renderHistory();
+
+updateOLED();
+
+updateActuators();
+
+
+addLog(
+    "SIGNAL SYNC Digital Prototype Started"
+);
+
+
+if (
+    historyData.length > 0
+) {
+
+    addLog(
+
+        historyData.length +
+        " previous records restored from browser storage"
+
+    );
+
+}
+
+</script>
+
+</body>
+
+</html>
