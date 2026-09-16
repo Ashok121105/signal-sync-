@@ -12,6 +12,6 @@ with open("index.html", "r", encoding="utf-8") as file:
 
 components.html(
     html_code,
-    height=3000,
+    height=5000,
     scrolling=True
 )
